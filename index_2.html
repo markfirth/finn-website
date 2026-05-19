@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18174879167"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-18174879167');
+</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FINN — Book it. It's handled.</title>
+<meta name="description" content="FINN connects homeowners with trusted local service providers for lawn care, cleaning, snow removal, plumbing and more. Book in under 60 seconds."/>
+<meta property="og:title" content="FINN — Book it. It's handled."/>
+<meta property="og:description" content="Trusted home services at your fingertips. Lawn care, cleaning, snow removal and more."/>
+<meta property="og:url" content="https://finnhomejobs.com"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#1F2A24;--gm:#2E3D35;--gl:#3D5045;
+  --cr:#F7F5F0;--cm:#EDE9E2;--cb:#D8D3CB;
+  --ac:#4CAF78;--ad:#3A9060;
+  --tx:#1F2A24;--tm:#4A5550;--ts:#7A8880;
+  --wh:#fff;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--wh);color:var(--tx);line-height:1.5;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--cb);padding:0 5%}
+.nav-inner{max-width:1100px;margin:0 auto;height:64px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:22px;font-weight:900;color:var(--g);letter-spacing:-0.5px;text-decoration:none}
+.logo span{color:var(--ac)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:14px;font-weight:600;color:var(--tm);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--g)}
+.nav-cta{background:var(--g);color:#fff;border:none;border-radius:10px;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;transition:transform .2s,background .2s}
+.nav-cta:hover{background:var(--gm);transform:scale(1.02)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--g);border-radius:2px}
+
+/* HERO */
+.hero{min-height:100vh;background:var(--g);display:flex;align-items:center;padding:120px 5% 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-20%;right:-10%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(76,175,120,0.15) 0%,transparent 70%)}
+.hero::after{content:'';position:absolute;bottom:-20%;left:-10%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(76,175,120,0.08) 0%,transparent 70%)}
+.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;width:100%}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(76,175,120,0.15);border:1px solid rgba(76,175,120,0.3);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--ac);margin-bottom:24px}
+.hero h1{font-size:clamp(42px,5vw,68px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-2px;margin-bottom:20px}
+.hero h1 em{font-style:normal;color:var(--ac)}
+.hero p{font-size:18px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:36px;max-width:480px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:48px}
+.btn-primary{background:var(--ac);color:#fff;border:none;border-radius:12px;padding:16px 32px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:transform .2s,background .2s}
+.btn-primary:hover{background:var(--ad);transform:scale(1.02)}
+.btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.3);border-radius:12px;padding:15px 32px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:border-color .2s}
+.btn-outline:hover{border-color:rgba(255,255,255,0.6)}
+.hero-stats{display:flex;gap:32px}
+.hero-stat .val{font-size:28px;font-weight:800;color:#fff}
+.hero-stat .lbl{font-size:13px;color:rgba(255,255,255,0.45);margin-top:2px}
+
+/* PHONE MOCKUP */
+.phone-wrap{position:relative;display:flex;justify-content:center}
+.phone{width:280px;background:#0A0A0A;border-radius:40px;padding:12px;box-shadow:0 40px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.05);position:relative}
+.phone-screen{background:var(--cr);border-radius:30px;overflow:hidden;aspect-ratio:9/19}
+.phone-notch{width:100px;height:28px;background:#0A0A0A;border-radius:0 0 18px 18px;position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:2}
+.app-preview{width:100%;height:100%;background:var(--g);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px 24px;gap:16px}
+.app-logo-sm{width:60px;height:60px;background:rgba(255,255,255,0.12);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#fff}
+.app-headline{font-size:26px;font-weight:900;color:#fff;text-align:center;line-height:1.1;letter-spacing:-0.5px}
+.app-sub{font-size:13px;color:rgba(255,255,255,0.55);text-align:center}
+.app-btn{background:#fff;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:700;color:var(--g);width:100%}
+.app-btn-outline{border:1.5px solid rgba(255,255,255,0.3);border-radius:10px;padding:11px 24px;font-size:14px;font-weight:700;color:#fff;width:100%}
+.phone-glow{position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:200px;height:80px;background:rgba(76,175,120,0.3);filter:blur(40px);border-radius:50%}
+
+/* SERVICES */
+.services{padding:100px 5%;background:var(--cr)}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-badge{display:inline-block;background:#EFF6F1;color:var(--ad);font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.8px}
+.section-title{font-size:clamp(32px,4vw,48px);font-weight:800;color:var(--g);letter-spacing:-1px;margin-bottom:14px;line-height:1.1}
+.section-sub{font-size:17px;color:var(--ts);max-width:540px;margin-bottom:56px;line-height:1.6}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.svc-card{background:var(--wh);border-radius:20px;padding:28px 24px;border:0.5px solid var(--cb);transition:transform .2s,box-shadow .2s;cursor:pointer}
+.svc-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(31,42,36,0.08)}
+.svc-icon{width:56px;height:56px;background:var(--cr);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:16px}
+.svc-card h3{font-size:17px;font-weight:700;color:var(--g);margin-bottom:6px}
+.svc-card p{font-size:14px;color:var(--ts);line-height:1.5;margin-bottom:14px}
+.svc-price{font-size:14px;font-weight:700;color:var(--ac)}
+
+/* HOW IT WORKS */
+.how{padding:100px 5%;background:var(--wh)}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:56px}
+.step-card{text-align:center;padding:0 20px}
+.step-num{width:52px;height:52px;background:var(--g);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;margin:0 auto 20px}
+.step-card h3{font-size:18px;font-weight:700;color:var(--g);margin-bottom:10px}
+.step-card p{font-size:15px;color:var(--ts);line-height:1.6}
+.steps-connector{display:flex;align-items:center;justify-content:center;gap:40px;margin-top:40px}
+
+/* TRUST */
+.trust{padding:100px 5%;background:var(--g)}
+.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:56px}
+.trust-card{background:rgba(255,255,255,0.06);border-radius:20px;padding:28px 20px;text-align:center;border:0.5px solid rgba(255,255,255,0.08)}
+.trust-icon{font-size:32px;margin-bottom:14px}
+.trust-card h3{font-size:16px;font-weight:700;color:#fff;margin-bottom:8px}
+.trust-card p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5}
+
+/* PROVIDER */
+.provider{padding:100px 5%;background:var(--cr)}
+.provider-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.provider-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px}
+.pstat{background:var(--wh);border-radius:16px;padding:20px;border:0.5px solid var(--cb)}
+.pstat .val{font-size:28px;font-weight:800;color:var(--g)}
+.pstat .lbl{font-size:13px;color:var(--ts);margin-top:4px}
+.provider-card{background:var(--g);border-radius:24px;padding:32px;color:#fff}
+.provider-card h3{font-size:20px;font-weight:700;margin-bottom:8px}
+.provider-card p{font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:24px;line-height:1.6}
+.earn-display{background:rgba(255,255,255,0.08);border-radius:14px;padding:20px;margin-bottom:16px}
+.earn-display .label{font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:4px}
+.earn-display .amount{font-size:36px;font-weight:800;letter-spacing:-1px}
+.earn-stats{display:flex;gap:10px}
+.estat{flex:1;background:rgba(255,255,255,0.08);border-radius:10px;padding:10px;text-align:center}
+.estat .v{font-size:18px;font-weight:700}
+.estat .l{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px}
+
+/* REVIEWS */
+.reviews{padding:100px 5%;background:var(--wh)}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
+.review-card{background:var(--cr);border-radius:20px;padding:28px;border:0.5px solid var(--cb)}
+.stars{color:#F59E0B;font-size:14px;margin-bottom:14px;letter-spacing:2px}
+.review-card p{font-size:15px;color:var(--tx);line-height:1.6;margin-bottom:20px}
+.reviewer{display:flex;align-items:center;gap:12px}
+.rev-avatar{width:40px;height:40px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff}
+.rev-name{font-size:14px;font-weight:700;color:var(--g)}
+.rev-loc{font-size:12px;color:var(--ts)}
+
+/* CTA */
+.cta{padding:100px 5%;background:var(--g);text-align:center}
+.cta h2{font-size:clamp(36px,4vw,56px);font-weight:900;color:#fff;letter-spacing:-1px;margin-bottom:16px;line-height:1.1}
+.cta p{font-size:18px;color:rgba(255,255,255,0.6);margin-bottom:40px;max-width:500px;margin-left:auto;margin-right:auto}
+.app-badges{display:flex;gap:14px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+.app-badge{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 20px;text-decoration:none;transition:background .2s}
+.app-badge:hover{background:rgba(255,255,255,0.12)}
+.app-badge-icon{font-size:24px}
+.app-badge-text .top{font-size:11px;color:rgba(255,255,255,0.5)}
+.app-badge-text .bottom{font-size:16px;font-weight:700;color:#fff}
+
+/* EARLY ACCESS FORM */
+.early-form{display:flex;gap:10px;max-width:480px;margin:0 auto 16px;flex-wrap:wrap}
+.early-input{flex:1;min-width:200px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:14px 18px;font-size:15px;color:#fff;outline:none;font-family:'Inter',sans-serif}
+.early-input::placeholder{color:rgba(255,255,255,0.35)}
+.early-input:focus{border-color:var(--ac)}
+.early-submit{background:var(--ac);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .2s}
+.early-submit:hover{background:var(--ad)}
+.early-note{font-size:13px;color:rgba(255,255,255,0.35);text-align:center}
+
+/* FOOTER */
+footer{background:#111A14;padding:60px 5% 40px}
+.footer-inner{max-width:1100px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+.footer-logo{font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin-bottom:12px}
+.footer-desc{font-size:14px;color:rgba(255,255,255,0.4);line-height:1.6;max-width:240px}
+.footer-col h4{font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px}
+.footer-col a{display:block;font-size:14px;color:rgba(255,255,255,0.4);text-decoration:none;margin-bottom:10px;transition:color .2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:0.5px solid rgba(255,255,255,0.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-bottom p{font-size:13px;color:rgba(255,255,255,0.3)}
+.footer-tagline{font-size:13px;color:rgba(255,255,255,0.2);font-style:italic}
+
+/* SUCCESS MESSAGE */
+.success-msg{background:rgba(76,175,120,0.15);border:1px solid rgba(76,175,120,0.3);border-radius:10px;padding:14px 20px;font-size:14px;color:var(--ac);font-weight:600;text-align:center;margin-top:12px;display:none}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;gap:48px;text-align:center}
+  .hero p{margin-left:auto;margin-right:auto}
+  .hero-actions{justify-content:center}
+  .hero-stats{justify-content:center}
+  .phone-wrap{display:none}
+  .services-grid{grid-template-columns:repeat(2,1fr)}
+  .steps-grid{grid-template-columns:1fr;gap:32px}
+  .trust-grid{grid-template-columns:repeat(2,1fr)}
+  .provider-inner{grid-template-columns:1fr}
+  .reviews-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+}
+@media(max-width:600px){
+  .services-grid{grid-template-columns:1fr}
+  .trust-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr}
+  .provider-stats{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">FINN<span>.</span></a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#how">How it works</a>
+      <a href="#providers">For providers</a>
+      <a href="#reviews">Reviews</a>
+    </div>
+    <a href="#early" class="nav-cta">Get early access</a>
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">🌿 Coming to you soon</div>
+      <h1>Book it.<br/><em>It's handled.</em></h1>
+      <p>FINN connects homeowners with trusted local service providers for lawn care, cleaning, snow removal, plumbing and more — in under 60 seconds.</p>
+      <div class="hero-actions">
+        <a href="#early" class="btn-primary">Get early access →</a>
+        <a href="#how" class="btn-outline">See how it works</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="val">60s</div><div class="lbl">To book a service</div></div>
+        <div class="hero-stat"><div class="val">9+</div><div class="lbl">Services available</div></div>
+        <div class="hero-stat"><div class="val">100%</div><div class="lbl">Vetted providers</div></div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-preview">
+            <div class="app-logo-sm">F</div>
+            <div class="app-headline">Book it.<br/>It's handled.</div>
+            <div class="app-sub">Trusted home services</div>
+            <div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:8px">
+              <div class="app-btn" style="text-align:center">Get started</div>
+              <div class="app-btn-outline" style="text-align:center">Sign in</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;width:100%">
+              <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:8px;text-align:center">
+                <div style="font-size:16px">🌿</div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:3px">Lawn</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:8px;text-align:center">
+                <div style="font-size:16px">🏠</div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:3px">Clean</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:8px;text-align:center">
+                <div style="font-size:16px">❄️</div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:3px">Snow</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:8px;text-align:center">
+                <div style="font-size:16px">🔧</div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.5);margin-top:3px">Handyman</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-glow"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="section-inner">
+    <div class="section-badge">Services</div>
+    <h2 class="section-title">Everything your home needs</h2>
+    <p class="section-sub">From weekly lawn care to emergency plumbing — FINN has trusted pros for every job.</p>
+    <div class="services-grid">
+      <div class="svc-card"><div class="svc-icon">🌿</div><h3>Lawn Mowing</h3><p>Regular cuts, edging, and cleanup. Set up weekly or bi-weekly service and save.</p></div>
+      <div class="svc-card"><div class="svc-icon">🏠</div><h3>House Cleaning</h3><p>Deep cleans, standard cleans, and move-in/move-out. Fully vetted cleaners.</p></div>
+      <div class="svc-card"><div class="svc-icon">❄️</div><h3>Snow Removal</h3><p>Driveway, walkways and steps cleared fast. Never get stuck in the winter again.</p></div>
+      <div class="svc-card"><div class="svc-icon">🪣</div><h3>Pressure Washing</h3><p>Driveways, decks, siding and more. Get your property looking like new.</p></div>
+      <div class="svc-card"><div class="svc-icon">🔧</div><h3>Handyman</h3><p>Repairs, installs, and odd jobs done right. Hourly or fixed-price quotes available.</p></div>
+      <div class="svc-card"><div class="svc-icon">🪟</div><h3>Window Cleaning</h3><p>Interior and exterior windows cleaned to a streak-free shine.</p></div>
+      <div class="svc-card"><div class="svc-icon">⚡</div><h3>Electrical</h3><p>Licensed electricians for outlets, fixtures, panel work and more.</p></div>
+      <div class="svc-card"><div class="svc-icon">💧</div><h3>Plumbing</h3><p>Leaks, drains, installations and repairs from certified plumbers.</p></div>
+      <div class="svc-card"><div class="svc-icon">🗑️</div><h3>Junk Removal</h3><p>Full load pickup and haul away. Clear out your garage, yard or basement fast.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-inner">
+    <div class="section-badge">How it works</div>
+    <h2 class="section-title">Book in under 60 seconds</h2>
+    <p class="section-sub">Three simple steps between you and a handled home.</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Set up your home profile</h3>
+        <p>Tell us about your property — size, rooms, lawn, driveway. Takes 5 minutes once and helps us give you accurate pricing every time.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Pick a service & time</h3>
+        <p>Browse services, choose a date and time window, and see upfront pricing before you confirm. No surprises.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>It's handled</h3>
+        <p>A vetted local provider shows up, does the job, and you pay securely through the app. Rate them when done.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust">
+  <div class="section-inner">
+    <div class="section-badge" style="background:rgba(76,175,120,0.15);color:var(--ac)">Why FINN</div>
+    <h2 class="section-title" style="color:#fff">Built on trust</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.5)">Every provider on FINN is vetted, insured, and rated by real homeowners.</p>
+    <div class="trust-grid">
+      <div class="trust-card"><div class="trust-icon">🛡</div><h3>Verified providers</h3><p>Every provider passes ID verification and proof of insurance before joining.</p></div>
+      <div class="trust-card"><div class="trust-icon">💳</div><h3>Secure payments</h3><p>Payment held until the job is complete. Powered by Stripe — bank-level security.</p></div>
+      <div class="trust-card"><div class="trust-icon">⭐</div><h3>Real reviews</h3><p>Ratings from real customers after every job. Only people who booked can review.</p></div>
+      <div class="trust-card"><div class="trust-icon">📸</div><h3>Before & after photos</h3><p>Providers upload photos on completion. You see the work before releasing payment.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR PROVIDERS -->
+<section class="provider" id="providers">
+  <div class="provider-inner" style="max-width:1100px;margin:0 auto">
+    <div>
+      <div class="section-badge">For providers</div>
+      <h2 class="section-title">Grow your business with FINN</h2>
+      <p style="font-size:17px;color:var(--ts);line-height:1.7;margin-bottom:32px">Stop chasing leads. FINN brings jobs to you — you just show up and get paid. Set your own schedule, choose your services, and build a 5-star reputation.</p>
+      <div class="provider-stats">
+        <div class="pstat"><div class="val">$0</div><div class="lbl">To join FINN</div></div>
+        <div class="pstat"><div class="val">90%</div><div class="lbl">You keep of every job</div></div>
+        <div class="pstat"><div class="val">Same</div><div class="lbl">Day payouts available</div></div>
+        <div class="pstat"><div class="val">You</div><div class="lbl">Set your own hours</div></div>
+      </div>
+      <a href="#early" class="btn-primary" style="margin-top:32px;display:inline-block">Apply as a provider →</a>
+    </div>
+    <div class="provider-card">
+      <h3>Mike G. · Lawn care pro</h3>
+      <p>Joined FINN 3 months ago · Winkler, MB</p>
+      <div class="earn-display">
+        <div class="label">This week's earnings</div>
+        <div class="amount">$847</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:2px">↑ 23% vs last week</div>
+      </div>
+      <div class="earn-stats">
+        <div class="estat"><div class="v">12</div><div class="l">Jobs done</div></div>
+        <div class="estat"><div class="v">4.9★</div><div class="l">Rating</div></div>
+        <div class="estat"><div class="v">98%</div><div class="l">Completion</div></div>
+      </div>
+      <div style="margin-top:16px;background:rgba(255,255,255,0.06);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;color:rgba(255,255,255,0.6)">Provider score</span>
+        <span style="font-size:12px;font-weight:700;background:rgba(76,175,120,0.2);color:var(--ac);padding:3px 10px;border-radius:20px">Elite ⭐ Top 5%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div class="section-inner">
+    <div class="section-badge">Reviews</div>
+    <h2 class="section-title">Homeowners love FINN</h2>
+    <p class="section-sub">Real reviews from real customers in your community.</p>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <p>"Booked a lawn mowing in literally 45 seconds. Provider showed up on time, did an amazing job, and I paid right from my phone. This is how home services should work."</p>
+        <div class="reviewer"><div class="rev-avatar">SJ</div><div><div class="rev-name">Sarah J.</div><div class="rev-loc">Winkler, MB · Lawn Mowing</div></div></div>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <p>"Had my driveway pressure washed and the windows cleaned in the same afternoon. Both providers were professional and the before/after photos were a nice touch."</p>
+        <div class="reviewer"><div class="rev-avatar">TK</div><div><div class="rev-name">Tom K.</div><div class="rev-loc">Morden, MB · Pressure Washing</div></div></div>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <p>"Snow removal service is a lifesaver this winter. Set it up once and my driveway is always clear in the morning. The payment hold feature gives me real peace of mind."</p>
+        <div class="reviewer"><div class="rev-avatar">LM</div><div><div class="rev-name">Linda M.</div><div class="rev-loc">Steinbach, MB · Snow Removal</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / EARLY ACCESS -->
+<section class="cta" id="early">
+  <div style="max-width:600px;margin:0 auto">
+    <div class="section-badge" style="background:rgba(76,175,120,0.15);color:var(--ac);margin-bottom:20px">Launching soon</div>
+    <h2>Be first in line.</h2>
+    <p>FINN is launching in Winkler and surrounding areas. Sign up for early access and get your first booking free.</p>
+    <!-- HubSpot Form — replace YOUR_PORTAL_ID and YOUR_FORM_ID below -->
+    <div id="hubspot-form-wrap" style="margin-bottom:16px"></div>
+    <p class="early-note">No spam. We'll only email you when FINN launches in your area.</p>
+    <div class="app-badges">
+      <a href="#" class="app-badge">
+        <div class="app-badge-icon">🍎</div>
+        <div class="app-badge-text"><div class="top">Download on the</div><div class="bottom">App Store</div></div>
+      </a>
+      <a href="#" class="app-badge">
+        <div class="app-badge-icon">▶</div>
+        <div class="app-badge-text"><div class="top">Get it on</div><div class="bottom">Google Play</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">FINN.</div>
+        <p class="footer-desc">Connecting homeowners with trusted local service providers across Manitoba.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="#">Lawn Mowing</a>
+        <a href="#">House Cleaning</a>
+        <a href="#">Snow Removal</a>
+        <a href="#">Pressure Washing</a>
+        <a href="#">Handyman</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About FINN</a>
+        <a href="#">For providers</a>
+        <a href="#">Pricing</a>
+        <a href="#">Blog</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a href="mailto:sales@finnhomejobs.com">sales@finnhomejobs.com</a>
+        <a href="#">Help centre</a>
+        <a href="#">Privacy policy</a>
+        <a href="#">Terms of service</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 FINN Home Jobs Inc. All rights reserved.</p>
+      <p class="footer-tagline">Book it. It's handled.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── HubSpot Form ──────────────────────────────────────────────────────────────
+// Step 1: Replace YOUR_PORTAL_ID with your HubSpot portal ID
+//         (HubSpot dashboard → top right avatar → Account & Billing → shows your Hub ID)
+// Step 2: Replace YOUR_FORM_ID with your HubSpot form ID
+//         (HubSpot → Marketing → Forms → your form → Actions → Share → Embed code)
+
+var HUBSPOT_PORTAL_ID = '343240674';
+var HUBSPOT_FORM_ID   = '46c68e6d-c479-4c5c-967b-35336655d3e9';
+
+(function() {
+  var script = document.createElement('script');
+  script.src = '//js.hsforms.net/forms/v2.js';
+  script.charset = 'utf-8';
+  script.onload = function() {
+    if (window.hbspt) {
+      window.hbspt.forms.create({
+        portalId: HUBSPOT_PORTAL_ID,
+        formId: HUBSPOT_FORM_ID,
+        target: '#hubspot-form-wrap',
+        cssClass: 'finn-hs-form',
+        onFormSubmit: function() {
+          console.log('Form submitted to HubSpot');
+        },
+        onFormSubmitted: function() {
+          var wrap = document.getElementById('hubspot-form-wrap');
+          wrap.innerHTML = '<div style="background:rgba(76,175,120,0.15);border:1px solid rgba(76,175,120,0.3);border-radius:10px;padding:16px 20px;font-size:14px;color:#4CAF78;font-weight:600;text-align:center">🎉 You\'re on the list! We\'ll be in touch soon.</div>';
+        }
+      });
+    }
+  };
+  document.head.appendChild(script);
+})();
+
+// ── HubSpot form styling (matches FINN brand) ─────────────────────────────────
+var style = document.createElement('style');
+style.textContent = [
+  '.finn-hs-form input[type=email], .finn-hs-form input[type=text] {',
+  '  background: rgba(255,255,255,0.08) !important;',
+  '  border: 1px solid rgba(255,255,255,0.2) !important;',
+  '  border-radius: 12px !important;',
+  '  padding: 14px 18px !important;',
+  '  font-size: 15px !important;',
+  '  color: #fff !important;',
+  '  width: 100% !important;',
+  '  font-family: Inter, sans-serif !important;',
+  '  margin-bottom: 10px !important;',
+  '}',
+  '.finn-hs-form input[type=email]::placeholder { color: rgba(255,255,255,0.35) !important; }',
+  '.finn-hs-form input[type=submit], .finn-hs-form .hs-button {',
+  '  background: #4CAF78 !important;',
+  '  color: #fff !important;',
+  '  border: none !important;',
+  '  border-radius: 12px !important;',
+  '  padding: 14px 28px !important;',
+  '  font-size: 15px !important;',
+  '  font-weight: 700 !important;',
+  '  cursor: pointer !important;',
+  '  width: 100% !important;',
+  '  font-family: Inter, sans-serif !important;',
+  '  transition: background .2s !important;',
+  '}',
+  '.finn-hs-form .hs-button:hover { background: #3A9060 !important; }',
+  '.finn-hs-form .hs-error-msg { color: #FCA5A5 !important; font-size: 13px !important; margin-top: 4px !important; }',
+  '.finn-hs-form label { color: rgba(255,255,255,0.6) !important; font-size: 13px !important; margin-bottom: 6px !important; display: block !important; }',
+  '.finn-hs-form .hs-form-field { margin-bottom: 12px !important; }',
+].join('\n');
+document.head.appendChild(style);
+
+function toggleMenu() {
+  const links = document.querySelector('.nav-links');
+  links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+  links.style.flexDirection = 'column';
+  links.style.position = 'absolute';
+  links.style.top = '64px';
+  links.style.left = '0';
+  links.style.right = '0';
+  links.style.background = '#fff';
+  links.style.padding = '20px';
+  links.style.borderBottom = '1px solid #D8D3CB';
+  links.style.zIndex = '99';
+}
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+</script>
+</body>
+</html>
