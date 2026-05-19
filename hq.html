@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FINN HQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --forest:#1F2A24;--forest2:#2A3A2E;
+  --ivory:#F6F1E8;--ivory2:#EDE8DF;--ivory3:#E4DED4;
+  --charcoal:#252422;--muted:#6B6560;--hint:#9A948E;
+  --stone:#D8D5CF;--stone2:#C8C4BC;--sage:#4CAF78;
+}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--ivory);color:var(--charcoal);font-size:14px}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--forest);display:flex;align-items:center;justify-content:center;z-index:1000;flex-direction:column;gap:0}
+#login-screen.hidden{display:none}
+.login-box{width:100%;max-width:360px;padding:0 24px}
+.login-logo{font-size:32px;font-weight:400;color:#fff;letter-spacing:0.5px;margin-bottom:6px}
+.login-tag{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:40px}
+.login-label{font-size:11px;font-weight:500;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:block}
+.login-inp{width:100%;padding:14px 16px;border-radius:12px;border:0.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);font-size:15px;color:#fff;font-family:'Inter',sans-serif;outline:none;transition:.2s;letter-spacing:2px;margin-bottom:10px}
+.login-inp:focus{border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.12)}
+.login-inp::placeholder{letter-spacing:0;color:rgba(255,255,255,0.25)}
+.login-btn{width:100%;padding:14px;border-radius:12px;border:none;background:var(--sage);color:#fff;font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s;margin-top:4px}
+.login-btn:hover{background:#3A9060}
+.login-err{font-size:12px;color:#F09595;margin-top:8px;display:none}
+.login-hint{font-size:11px;color:rgba(255,255,255,0.2);margin-top:24px;text-align:center}
+
+/* APP */
+#app{display:none;height:100vh;overflow:hidden}
+#app.visible{display:flex}
+
+.hq{display:grid;grid-template-columns:196px 1fr;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sb{background:var(--forest);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.sb-logo{padding:18px 16px 16px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0}
+.sb-wordmark{font-size:18px;font-weight:500;color:#fff;letter-spacing:0.5px}
+.sb-tagline{font-size:10px;color:rgba(255,255,255,0.35);margin-top:3px}
+.sb-nav{flex:1;overflow-y:auto;padding:4px 0}
+.sb-nav::-webkit-scrollbar{display:none}
+.sb-section{padding:12px 16px 4px;font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.sb-item{display:flex;align-items:center;gap:9px;padding:7px 16px;font-size:12px;color:rgba(255,255,255,0.55);cursor:pointer;transition:.15s;border-left:2px solid transparent;user-select:none}
+.sb-item:hover{color:#fff;background:rgba(255,255,255,0.06)}
+.sb-item.on{color:#fff;background:rgba(255,255,255,0.1);border-left-color:var(--sage)}
+.sb-item svg{width:14px;height:14px;flex-shrink:0;opacity:.8;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sb-item.on svg{opacity:1}
+.sb-badge{margin-left:auto;background:rgba(255,255,255,0.1);border-radius:10px;padding:1px 7px;font-size:10px;color:rgba(255,255,255,0.6)}
+.sb-footer{padding:14px 16px;border-top:0.5px solid rgba(255,255,255,0.08);flex-shrink:0}
+.sb-storage-bar{height:2px;background:rgba(255,255,255,0.12);border-radius:2px;margin-top:7px;overflow:hidden}
+.sb-storage-fill{height:2px;background:var(--sage);border-radius:2px;width:34%}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--ivory)}
+
+.topbar{display:flex;align-items:center;gap:10px;padding:11px 20px;border-bottom:0.5px solid var(--stone);background:var(--ivory);flex-shrink:0}
+.search-wrap{flex:1;position:relative;max-width:340px}
+.search-inp{width:100%;padding:7px 12px 7px 32px;border-radius:10px;border:0.5px solid var(--stone);background:var(--ivory2);font-size:13px;color:var(--charcoal);font-family:'Inter',sans-serif;outline:none}
+.search-inp::placeholder{color:var(--hint)}
+.search-inp:focus{border-color:var(--stone2);background:#fff}
+.s-ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--hint)}
+.tb-right{display:flex;align-items:center;gap:6px;margin-left:auto}
+.tb-btn{width:30px;height:30px;border-radius:8px;border:0.5px solid var(--stone);background:var(--ivory);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--hint);transition:.15s}
+.tb-btn:hover{background:var(--ivory2);color:var(--charcoal)}
+.tb-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.vt{display:flex;border:0.5px solid var(--stone);border-radius:8px;overflow:hidden}
+.vt-b{width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--hint);background:var(--ivory)}
+.vt-b.on{background:var(--ivory3);color:var(--charcoal)}
+.vt-b svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.create-btn{display:flex;align-items:center;gap:6px;padding:0 14px;height:30px;border-radius:10px;border:none;background:var(--forest);color:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s}
+.create-btn:hover{background:var(--forest2)}
+.logout-btn{display:flex;align-items:center;gap:5px;padding:0 12px;height:30px;border-radius:10px;border:0.5px solid var(--stone);background:transparent;color:var(--hint);font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s}
+.logout-btn:hover{color:var(--charcoal);background:var(--ivory2)}
+
+.content{flex:1;overflow-y:auto;padding:20px}
+
+.s-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.s-title{font-size:10px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--hint)}
+.s-link{font-size:11px;color:var(--hint);cursor:pointer;background:none;border:none;font-family:inherit}
+.s-link:hover{color:var(--charcoal)}
+
+.pin-row{display:flex;gap:6px;margin-bottom:22px;overflow-x:auto;padding-bottom:2px}
+.pin-card{flex-shrink:0;background:#fff;border:0.5px solid var(--stone);border-radius:10px;padding:9px 13px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:.15s;min-width:148px}
+.pin-card:hover{border-color:var(--stone2);background:var(--ivory2)}
+.pin-ic{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pin-name{font-size:12px;font-weight:500;color:var(--charcoal);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pin-meta{font-size:10px;color:var(--hint);margin-top:1px}
+
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(188px,1fr));gap:8px;margin-bottom:22px}
+.fc{background:#fff;border:0.5px solid var(--stone);border-radius:14px;padding:15px;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+.fc:hover{border-color:var(--stone2)}
+.fc-accent{position:absolute;top:0;left:0;right:0;height:2px}
+.fc-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;border:0.5px solid var(--stone)}
+.fc-ic svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fc-num{font-size:10px;color:var(--hint);margin-bottom:2px}
+.fc-name{font-size:13px;font-weight:500;color:var(--charcoal);margin-bottom:3px}
+.fc-desc{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:9px}
+.fc-foot{display:flex;justify-content:space-between;padding-top:9px;border-top:0.5px solid var(--stone)}
+.fc-count{font-size:11px;color:var(--hint)}
+.fc-date{font-size:10px;color:var(--hint)}
+
+.two-col{display:grid;grid-template-columns:1fr 256px;gap:18px}
+
+.rec-list{display:flex;flex-direction:column;gap:2px}
+.rec{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer;transition:.15s}
+.rec:hover{background:var(--ivory2)}
+.rec-ic{width:26px;height:26px;border-radius:6px;background:var(--ivory2);border:0.5px solid var(--stone);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rec-ic svg{width:13px;height:13px;stroke:var(--muted);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rec-name{font-size:12px;color:var(--charcoal);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-tag{font-size:10px;padding:2px 7px;border-radius:20px;margin-left:6px;flex-shrink:0}
+.tag-sage{background:#EAF3DE;color:#27500A}
+.tag-info{background:#E6F1FB;color:#0C447C}
+.rec-date{font-size:10px;color:var(--hint);white-space:nowrap;margin-left:auto;flex-shrink:0}
+
+.act-list{display:flex;flex-direction:column}
+.act{display:flex;gap:9px;padding:7px 0;border-bottom:0.5px solid var(--stone)}
+.act:last-child{border-bottom:none}
+.act-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.act-body{font-size:11px;color:var(--muted);line-height:1.5}
+.act-body strong{color:var(--charcoal);font-weight:500}
+.act-time{font-size:10px;color:var(--hint);margin-top:1px}
+
+/* DRAWER */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(31,42,36,0.2);z-index:50}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;top:0;right:-480px;width:460px;height:100%;background:#fff;border-left:0.5px solid var(--stone);z-index:51;display:flex;flex-direction:column;transition:right .25s ease;overflow:hidden}
+.drawer.open{right:0}
+.d-hd{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:0.5px solid var(--stone);flex-shrink:0}
+.d-ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.d-ic svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.d-title{font-size:14px;font-weight:500;color:var(--charcoal);flex:1}
+.d-sub{font-size:10px;color:var(--hint)}
+.d-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--ivory2);color:var(--hint);border:0.5px solid var(--stone);white-space:nowrap}
+.d-close{width:26px;height:26px;border-radius:6px;border:0.5px solid var(--stone);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--hint)}
+.d-close svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.d-body{flex:1;overflow-y:auto;padding:16px 18px}
+.d-sec{margin-bottom:16px}
+.d-sec-title{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--hint);margin-bottom:8px;padding-bottom:5px;border-bottom:0.5px solid var(--stone)}
+.upload-zone{border:1px dashed var(--stone2);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:.15s}
+.upload-zone:hover{border-color:var(--forest);background:var(--ivory)}
+.upload-zone p{font-size:12px;color:var(--muted);margin-top:6px}
+.upload-zone span{font-size:10px;color:var(--hint);margin-top:2px;display:block}
+.file-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;cursor:pointer;transition:.15s}
+.file-row:hover{background:var(--ivory2)}
+.file-row svg{width:13px;height:13px;stroke:var(--hint);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.f-name{font-size:12px;color:var(--charcoal);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.f-sz{font-size:10px;color:var(--hint)}
+.f-dt{font-size:10px;color:var(--hint);margin-left:6px}
+.note-area{width:100%;border:0.5px solid var(--stone);border-radius:8px;padding:9px 11px;font-size:12px;font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--ivory);resize:none;outline:none;min-height:72px;line-height:1.6}
+.note-area:focus{border-color:var(--stone2);background:#fff}
+.task-row{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:0.5px solid var(--stone)}
+.task-row:last-child{border-bottom:none}
+.t-chk{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--stone2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;background:#fff;margin-top:1px}
+.t-chk.done{background:var(--forest);border-color:var(--forest)}
+.t-chk svg{width:9px;height:9px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.t-txt{font-size:12px;color:var(--charcoal);flex:1;line-height:1.5}
+.t-txt.done{text-decoration:line-through;color:var(--hint)}
+.t-due{font-size:10px;color:var(--hint);padding:2px 7px;border-radius:8px;background:var(--ivory2);border:0.5px solid var(--stone);white-space:nowrap;flex-shrink:0}
+.tag-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.ftag{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--ivory2);border:0.5px solid var(--stone);color:var(--muted);cursor:pointer}
+.ftag:hover{border-color:var(--stone2)}
+.d-footer{padding:12px 18px;border-top:0.5px solid var(--stone);display:flex;gap:8px;flex-shrink:0}
+.d-btn{flex:1;height:32px;border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;transition:.15s;border:0.5px solid var(--stone);background:var(--ivory);color:var(--muted)}
+.d-btn:hover{background:var(--ivory2)}
+.d-btn.primary{background:var(--forest);color:#fff;border-color:var(--forest)}
+.d-btn.primary:hover{background:var(--forest2)}
+
+/* CREATE MENU */
+.menu-overlay{display:none;position:fixed;inset:0;z-index:60}
+.menu-overlay.open{display:block}
+.menu-panel{position:fixed;top:52px;right:20px;width:320px;background:#fff;border:0.5px solid var(--stone);border-radius:14px;overflow:hidden;z-index:61;box-shadow:0 4px 20px rgba(31,42,36,0.1)}
+.menu-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid var(--stone)}
+.menu-title{font-size:13px;font-weight:500;color:var(--charcoal)}
+.m-item{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;transition:.15s;border-bottom:0.5px solid var(--stone)}
+.m-item:last-child{border-bottom:none}
+.m-item:hover{background:var(--ivory)}
+.m-ic{width:28px;height:28px;border-radius:7px;background:var(--ivory2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.m-ic svg{width:14px;height:14px;stroke:var(--forest);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.m-name{font-size:12px;font-weight:500;color:var(--charcoal)}
+.m-sub{font-size:10px;color:var(--hint);margin-top:1px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">FINN.</div>
+    <div class="login-tag">Company headquarters</div>
+    <label class="login-label" for="pw-input">Access code</label>
+    <input class="login-inp" type="password" id="pw-input" placeholder="Enter your access code" onkeydown="if(event.key==='Enter')tryLogin()"/>
+    <button class="login-btn" onclick="tryLogin()">Enter HQ</button>
+    <div class="login-err" id="login-err">Incorrect access code. Try again.</div>
+    <div class="login-hint">finnhomejobs.com/hq — private access only</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+<div class="hq">
+
+<!-- SIDEBAR -->
+<div class="sb">
+  <div class="sb-logo">
+    <div class="sb-wordmark">FINN.</div>
+    <div class="sb-tagline">Book it. It's handled.</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-section">Workspace</div>
+    <div class="sb-item on"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</div>
+    <div class="sb-item"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>All files<span class="sb-badge">48</span></div>
+    <div class="sb-item"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Pinned</div>
+    <div class="sb-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Recent</div>
+    <div class="sb-item"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tasks<span class="sb-badge">7</span></div>
+    <div class="sb-section" style="margin-top:6px">Folders</div>
+    <div class="sb-item" onclick="openFolder(0)"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>01 Legal</div>
+    <div class="sb-item" onclick="openFolder(1)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>02 Banking</div>
+    <div class="sb-item" onclick="openFolder(2)"><svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22V12"/></svg>03 Brand</div>
+    <div class="sb-item" onclick="openFolder(3)"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>04 Product</div>
+    <div class="sb-item" onclick="openFolder(4)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>05 Operations</div>
+    <div class="sb-item" onclick="openFolder(5)"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>06 Marketing</div>
+    <div class="sb-item" onclick="openFolder(6)"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>07 Providers</div>
+    <div class="sb-item" onclick="openFolder(7)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>08 Customers</div>
+  </div>
+  <div class="sb-footer">
+    <div style="display:flex;justify-content:space-between">
+      <div style="font-size:10px;color:rgba(255,255,255,0.35)">Storage</div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.25)">3.4 / 10 GB</div>
+    </div>
+    <div class="sb-storage-bar"><div class="sb-storage-fill"></div></div>
+    <div style="margin-top:12px;font-size:10px;color:rgba(255,255,255,0.25)">sales@finnhomejobs.com</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="search-wrap">
+      <svg class="s-ic" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--hint);fill:none;stroke-width:2;stroke-linecap:round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-inp" type="text" placeholder="Search files, folders... (Ctrl+K)" id="srch" oninput="filterF(this.value)"/>
+    </div>
+    <div class="tb-right">
+      <div class="vt">
+        <div class="vt-b on" id="gBtn" onclick="setV('grid')" title="Grid">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+        <div class="vt-b" id="lBtn" onclick="setV('list')" title="List">
+          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </div>
+      </div>
+      <div class="tb-btn" title="Sort" onclick="sortF()">
+        <svg viewBox="0 0 24 24"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+      </div>
+      <button class="create-btn" onclick="openMenu()">+ Create new</button>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="s-hd"><div class="s-title">Pinned</div><button class="s-link">Manage</button></div>
+    <div class="pin-row">
+      <div class="pin-card" onclick="openFolder(2)"><div class="pin-ic" style="background:#EDE8DF;color:#252422"><svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/></svg></div><div><div class="pin-name">Brand guidelines</div><div class="pin-meta">03 Brand</div></div></div>
+      <div class="pin-card" onclick="openFolder(3)"><div class="pin-ic" style="background:#EAF3DE;color:#27500A"><svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div><div class="pin-name">Developer brief</div><div class="pin-meta">04 Product</div></div></div>
+      <div class="pin-card" onclick="openFolder(0)"><div class="pin-ic" style="background:#EAF3DE;color:#27500A"><svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="pin-name">Business reg.</div><div class="pin-meta">01 Legal</div></div></div>
+      <div class="pin-card" onclick="openFolder(1)"><div class="pin-ic" style="background:#FAEEDA;color:#633806"><svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="pin-name">Stripe setup</div><div class="pin-meta">02 Banking</div></div></div>
+    </div>
+
+    <div class="s-hd"><div class="s-title">Folders</div><button class="s-link" id="sortLbl" onclick="sortF()">A → Z</button></div>
+    <div class="fg" id="fg"></div>
+
+    <div class="two-col">
+      <div>
+        <div class="s-hd"><div class="s-title">Recent files</div><button class="s-link">See all</button></div>
+        <div class="rec-list" id="rl"></div>
+      </div>
+      <div>
+        <div class="s-hd"><div class="s-title">Activity</div></div>
+        <div class="act-list" id="al"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="dov" onclick="closeDW()"></div>
+<div class="drawer" id="drawer">
+  <div class="d-hd">
+    <div class="d-ic" id="dic"></div>
+    <div style="flex:1"><div class="d-title" id="dtitle"></div><div class="d-sub" id="dsub"></div></div>
+    <span class="d-badge" id="dbadge"></span>
+    <button class="d-close" onclick="closeDW()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="d-body" id="dbody"></div>
+  <div class="d-footer">
+    <button class="d-btn" onclick="closeDW()">Close</button>
+    <button class="d-btn primary">Upload file</button>
+  </div>
+</div>
+
+<!-- CREATE MENU -->
+<div class="menu-overlay" id="mov" onclick="closeMenu()"></div>
+<div class="menu-panel" id="mpanel" style="display:none">
+  <div class="menu-hd"><div class="menu-title">Create new</div><button class="d-close" onclick="closeMenu()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div class="m-item" onclick="closeMenu()"><div class="m-ic"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg></div><div><div class="m-name">New folder</div><div class="m-sub">Organise files into a folder</div></div></div>
+  <div class="m-item" onclick="closeMenu()"><div class="m-ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div><div class="m-name">New note</div><div class="m-sub">Quick note in any folder</div></div></div>
+  <div class="m-item" onclick="closeMenu()"><div class="m-ic"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div><div><div class="m-name">Upload file</div><div class="m-sub">Add a document, PDF, or image</div></div></div>
+  <div class="m-item" onclick="closeMenu()"><div class="m-ic"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div><div class="m-name">New task</div><div class="m-sub">Attach to any folder</div></div></div>
+  <div class="m-item" onclick="closeMenu()"><div class="m-ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div><div class="m-name">New SOP</div><div class="m-sub">Standard operating procedure</div></div></div>
+  <div class="m-item" onclick="closeMenu()"><div class="m-ic"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div><div class="m-name">New contract</div><div class="m-sub">Saves to 01 Legal automatically</div></div></div>
+</div>
+
+<script>
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+// Change this password to whatever you want
+var HQ_PASSWORD = 'finn2026';
+
+function tryLogin(){
+  var pw=document.getElementById('pw-input').value;
+  if(pw===HQ_PASSWORD){
+    sessionStorage.setItem('finn_hq_auth','1');
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+    init();
+  } else {
+    document.getElementById('login-err').style.display='block';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+function logout(){
+  sessionStorage.removeItem('finn_hq_auth');
+  location.reload();
+}
+
+if(sessionStorage.getItem('finn_hq_auth')==='1'){
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.add('visible');
+  init();
+}
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+var F=[
+  {num:'01',name:'Legal',desc:'Registration, contracts, NDAs, compliance',icon:'shield',ac:'#4A7C59',icBg:'#EAF3DE',icC:'#27500A',count:6,up:'Today'},
+  {num:'02',name:'Banking & Financials',desc:'Bank accounts, Stripe, invoices, expenses',icon:'dollar',ac:'#C8A050',icBg:'#FAEEDA',icC:'#633806',count:11,up:'Yesterday'},
+  {num:'03',name:'Brand',desc:'Logos, colors, typography, design system',icon:'palette',ac:'#1F2A24',icBg:'#EDE8DF',icC:'#252422',count:18,up:'2 days ago'},
+  {num:'04',name:'Product',desc:'App prototype, developer brief, roadmap',icon:'mobile',ac:'#3B6D11',icBg:'#EAF3DE',icC:'#27500A',count:9,up:'Today'},
+  {num:'05',name:'Operations',desc:'SOPs, onboarding flows, team processes',icon:'settings',ac:'#888780',icBg:'#F1EFE8',icC:'#444441',count:4,up:'3 days ago'},
+  {num:'06',name:'Marketing',desc:'Landing page, HubSpot, social, campaigns',icon:'signal',ac:'#993C1D',icBg:'#FAECE7',icC:'#712B13',count:7,up:'Today'},
+  {num:'07',name:'Providers',desc:'Onboarding, verification, agreements',icon:'tool',ac:'#5F5E5A',icBg:'#F1EFE8',icC:'#444441',count:3,up:'4 days ago'},
+  {num:'08',name:'Customers',desc:'Early access list, HubSpot, feedback',icon:'users',ac:'#3B6D11',icBg:'#EAF3DE',icC:'#27500A',count:5,up:'Yesterday'},
+];
+
+var ICONS={
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  dollar:'<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  palette:'<circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/>',
+  mobile:'<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>',
+  signal:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  tool:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  code:'<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+  db:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',
+  zip:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/>',
+};
+
+var FF={
+  0:[{n:'2026-05-19_Business_Name_Search.pdf',i:'file',s:'0.8 MB',d:'Today'},{n:'2026-05-19_MB_Registration_Form.pdf',i:'file',s:'1.2 MB',d:'Today'},{n:'FINN_NDA_Template.docx',i:'file',s:'0.3 MB',d:'3 days ago'}],
+  1:[{n:'2026-05-18_Stripe_Keys.txt',i:'file',s:'4 KB',d:'2 days ago'},{n:'2026-05-18_Supabase_Credentials.txt',i:'file',s:'2 KB',d:'2 days ago'},{n:'FINN_Business_Banking_Notes.txt',i:'file',s:'6 KB',d:'Yesterday'}],
+  2:[{n:'FINN_Brand_Guidelines_v1.pdf',i:'file',s:'4.2 MB',d:'2 days ago'},{n:'FINN_Logo_Primary.svg',i:'file',s:'0.1 MB',d:'3 days ago'},{n:'FINN_Design_System_v1.html',i:'code',s:'0.6 MB',d:'Today'}],
+  3:[{n:'finn-snack.js',i:'code',s:'1.1 MB',d:'Today'},{n:'finn-developer-brief.md',i:'file',s:'0.2 MB',d:'Today'},{n:'finn-app-v2.zip',i:'zip',s:'8.4 MB',d:'3 days ago'},{n:'supabase-schema.sql',i:'db',s:'0.1 MB',d:'Yesterday'}],
+  4:[{n:'FINN_Provider_Onboarding_SOP.docx',i:'file',s:'0.4 MB',d:'3 days ago'},{n:'FINN_Booking_Flow_SOP.docx',i:'file',s:'0.3 MB',d:'4 days ago'}],
+  5:[{n:'index.html',i:'code',s:'0.5 MB',d:'Today'},{n:'FINN_Launch_Plan.docx',i:'file',s:'0.2 MB',d:'Yesterday'},{n:'FINN_Facebook_Draft.txt',i:'file',s:'2 KB',d:'Today'}],
+  6:[{n:'FINN_Provider_Agreement.docx',i:'file',s:'0.4 MB',d:'4 days ago'},{n:'FINN_Verification_Checklist.pdf',i:'file',s:'0.2 MB',d:'4 days ago'}],
+  7:[{n:'FINN_Early_Access_Signups.csv',i:'file',s:'0.1 MB',d:'Yesterday'},{n:'FINN_Customer_Feedback.docx',i:'file',s:'0.2 MB',d:'3 days ago'}],
+};
+
+var FT={
+  0:[{t:'Register business name — Companies Office',d:false,due:'Today'},{t:'Get CRA Business Number',d:false,due:'This week'},{t:'Open business bank account',d:false,due:'This week'}],
+  1:[{t:'Move Stripe to business bank account',d:false,due:'This week'},{t:'Enable two-factor auth on Stripe',d:false,due:'Today'},{t:'Set payout schedule to manual',d:true,due:''}],
+  2:[{t:'Generate 12 AI house photos',d:false,due:'This week'},{t:'Send design system to developer',d:false,due:'Today'}],
+  3:[{t:'Send developer brief to Upwork dev',d:false,due:'Today'},{t:'Connect Supabase auth to app',d:false,due:'Next week'},{t:'Deploy Stripe Edge Functions',d:false,due:'Next week'}],
+  4:[{t:'Write provider onboarding SOP',d:false,due:'This week'},{t:'Create booking flow chart',d:true,due:''}],
+  5:[{t:'Share finnhomejobs.com on Facebook',d:false,due:'Today'},{t:'Post on Nextdoor Winkler',d:false,due:'Today'},{t:'Recruit 5 beta providers',d:false,due:'This week'}],
+  6:[{t:'Recruit 5 beta service providers',d:false,due:'This week'},{t:'Verify first provider identity',d:false,due:'Next week'}],
+  7:[{t:'Sign up 20 early access customers',d:false,due:'This week'},{t:'Send welcome email to signups',d:false,due:'This week'}],
+};
+
+var FTags={0:['legal','compliance'],1:['finance','stripe'],2:['brand','design'],3:['app','dev'],4:['ops','sop'],5:['marketing','launch'],6:['providers','ops'],7:['customers','crm']};
+
+var RECENT=[
+  {n:'finn-developer-brief.md',f:'04 Product',i:'file',d:'Today 9:14am',tag:'Updated',tc:'tag-info'},
+  {n:'2026-05-19_Business_Registration.pdf',f:'01 Legal',i:'file',d:'Today 8:30am',tag:'New',tc:'tag-sage'},
+  {n:'FINN_Brand_Guidelines_v1.pdf',f:'03 Brand',i:'file',d:'Yesterday',tag:'',tc:''},
+  {n:'finn-snack.js',f:'04 Product',i:'code',d:'Yesterday',tag:'',tc:''},
+  {n:'supabase-schema.sql',f:'04 Product',i:'db',d:'2 days ago',tag:'',tc:''},
+  {n:'FINN_Launch_Plan.docx',f:'06 Marketing',i:'file',d:'Yesterday',tag:'',tc:''},
+];
+
+var ACT=[
+  {dot:'#4A7C59',t:'<strong>finn-developer-brief.md</strong> uploaded to 04 Product',time:'9:14 am today'},
+  {dot:'#3B6D11',t:'<strong>Supabase schema</strong> deployed successfully',time:'8:45 am today'},
+  {dot:'#C8A050',t:'<strong>Business registration</strong> started in 01 Legal',time:'8:30 am today'},
+  {dot:'#4A7C59',t:'<strong>finnhomejobs.com</strong> went live',time:'Yesterday 7:22 pm'},
+  {dot:'#185FA5',t:'<strong>HubSpot</strong> form connected to landing page',time:'Yesterday 4:10 pm'},
+  {dot:'#993C1D',t:'<strong>Stripe</strong> live keys saved to 02 Banking',time:'2 days ago'},
+];
+
+var curV='grid', sortAsc=true;
+
+function svg(icon,color){return '<svg style="width:14px;height:14px;stroke:'+(color||'currentColor')+';fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24">'+ICONS[icon]+'</svg>';}
+
+function rF(list){
+  var g=document.getElementById('fg');
+  if(curV==='list'){
+    g.style.gridTemplateColumns='1fr';
+    g.innerHTML=list.map(function(f){
+      var i=F.indexOf(f);
+      return '<div class="rec" onclick="openFolder('+i+')">'
+        +'<div class="rec-ic">'+svg(f.icon,f.icC)+'</div>'
+        +'<div class="rec-name"><span style="color:var(--hint)">'+f.num+'</span> '+f.name+'</div>'
+        +'<div class="rec-date">'+f.count+' files</div>'
+        +'<div class="rec-date" style="margin-left:8px">'+f.up+'</div>'
+        +'</div>';
+    }).join('');return;
+  }
+  g.style.gridTemplateColumns='repeat(auto-fill,minmax(188px,1fr))';
+  g.innerHTML=list.map(function(f){
+    var i=F.indexOf(f);
+    return '<div class="fc" onclick="openFolder('+i+')">'
+      +'<div class="fc-accent" style="background:'+f.ac+'"></div>'
+      +'<div class="fc-ic" style="background:'+f.icBg+'">'+svg(f.icon,f.icC)+'</div>'
+      +'<div class="fc-num">'+f.num+'</div>'
+      +'<div class="fc-name">'+f.name+'</div>'
+      +'<div class="fc-desc">'+f.desc+'</div>'
+      +'<div class="fc-foot"><div class="fc-count">'+f.count+' files</div><div class="fc-date">'+f.up+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+
+function rRL(){
+  document.getElementById('rl').innerHTML=RECENT.map(function(r){
+    return '<div class="rec"><div class="rec-ic">'+svg(r.i)+'</div>'
+      +'<div class="rec-name">'+r.n+'</div>'
+      +(r.tag?'<span class="rec-tag '+r.tc+'">'+r.tag+'</span>':'')
+      +'<div class="rec-date">'+r.d+'</div></div>';
+  }).join('');
+}
+
+function rAL(){
+  document.getElementById('al').innerHTML=ACT.map(function(a){
+    return '<div class="act"><div class="act-dot" style="background:'+a.dot+'"></div>'
+      +'<div><div class="act-body">'+a.t+'</div><div class="act-time">'+a.time+'</div></div></div>';
+  }).join('');
+}
+
+function filterF(q){
+  var lq=q.toLowerCase();
+  rF(q?F.filter(function(f){return f.name.toLowerCase().includes(lq)||f.desc.toLowerCase().includes(lq)}):F);
+}
+
+function setV(v){
+  curV=v;
+  document.getElementById('gBtn').classList.toggle('on',v==='grid');
+  document.getElementById('lBtn').classList.toggle('on',v==='list');
+  rF(F);
+}
+
+function sortF(){
+  sortAsc=!sortAsc;
+  F.sort(function(a,b){return sortAsc?a.name.localeCompare(b.name):b.name.localeCompare(a.name)});
+  document.getElementById('sortLbl').textContent=sortAsc?'A → Z':'Z → A';
+  rF(F);
+}
+
+function openFolder(idx){
+  var f=F[idx],files=FF[idx]||[],tasks=FT[idx]||[],tags=FTags[idx]||[];
+  var dic=document.getElementById('dic');
+  dic.style.background=f.icBg;
+  dic.style.color=f.icC;
+  dic.innerHTML=svg(f.icon,f.icC);
+  document.getElementById('dtitle').textContent=f.num+' '+f.name;
+  document.getElementById('dsub').textContent=f.count+' files · Updated '+f.up;
+  document.getElementById('dbadge').textContent=f.up;
+  var chkSvg='<svg viewBox="0 0 24 24" style="width:9px;height:9px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>';
+  document.getElementById('dbody').innerHTML=
+    '<div class="d-sec"><div class="d-sec-title">Upload</div>'
+    +'<div class="upload-zone"><svg style="width:20px;height:20px;stroke:var(--hint);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg><p>Drag files here or click to browse</p><span>PDF · DOC · JPG · ZIP</span></div></div>'
+    +'<div class="d-sec"><div class="d-sec-title">Files ('+files.length+')</div>'
+    +files.map(function(fi){return '<div class="file-row">'+svg(fi.i)+'<div class="f-name">'+fi.n+'</div><div class="f-sz">'+fi.s+'</div><div class="f-dt">'+fi.d+'</div></div>';}).join('')+'</div>'
+    +'<div class="d-sec"><div class="d-sec-title">Tasks ('+tasks.length+')</div>'
+    +tasks.map(function(t,ti){return '<div class="task-row"><div class="t-chk'+(t.d?' done':'')+'" onclick="toggleT('+idx+','+ti+',this)">'+(t.d?chkSvg:'')+'</div><div class="t-txt'+(t.d?' done':'')+'">'+t.t+'</div>'+(t.due?'<div class="t-due">'+t.due+'</div>':'')+'</div>';}).join('')+'</div>'
+    +'<div class="d-sec"><div class="d-sec-title">Notes</div><textarea class="note-area" placeholder="Add a note for this folder..."></textarea></div>'
+    +'<div class="d-sec"><div class="d-sec-title">Tags</div><div class="tag-wrap">'+tags.map(function(t){return '<div class="ftag">'+t+'</div>';}).join('')+'<div class="ftag">+ Add tag</div></div></div>';
+  document.getElementById('dov').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function toggleT(fi,ti,el){
+  var t=FT[fi][ti];t.d=!t.d;
+  var chkSvg='<svg viewBox="0 0 24 24" style="width:9px;height:9px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>';
+  el.classList.toggle('done',t.d);
+  el.innerHTML=t.d?chkSvg:'';
+  el.nextElementSibling.classList.toggle('done',t.d);
+}
+
+function closeDW(){
+  document.getElementById('dov').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+function openMenu(){
+  document.getElementById('mov').classList.add('open');
+  document.getElementById('mpanel').style.display='block';
+}
+
+function closeMenu(){
+  document.getElementById('mov').classList.remove('open');
+  document.getElementById('mpanel').style.display='none';
+}
+
+function init(){rF(F);rRL();rAL();}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){closeDW();closeMenu();}
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();var s=document.getElementById('srch');if(s)s.focus();}
+});
+</script>
+</body>
+</html>
