@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FINN HQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:#F6F1E8;color:#252422;font-size:14px}
+#login{position:fixed;inset:0;background:#1F2A24;display:flex;align-items:center;justify-content:center;z-index:999}
+#login.hide{display:none}
+.lb{width:320px;padding:0 24px}
+.lw{font-size:28px;font-weight:400;color:#fff;margin-bottom:4px}
+.lt{font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:36px}
+.ll{font-size:10px;font-weight:500;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;display:block}
+.li{width:100%;padding:13px 16px;border-radius:10px;border:0.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);font-size:15px;color:#fff;font-family:'Inter',sans-serif;outline:none;letter-spacing:2px;margin-bottom:10px}
+.li::placeholder{letter-spacing:0;color:rgba(255,255,255,0.2)}
+.li:focus{border-color:rgba(255,255,255,0.3)}
+.lb-btn{width:100%;padding:13px;border-radius:10px;border:none;background:#4CAF78;color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif}
+.lb-btn:hover{background:#3A9060}
+.le{font-size:12px;color:#F09595;margin-top:8px;display:none}
+#app{display:none;height:100vh}
+#app.show{display:grid;grid-template-columns:192px 1fr}
+.sb{background:#1F2A24;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.sb-top{padding:18px 16px 14px;border-bottom:0.5px solid rgba(255,255,255,0.08)}
+.sb-w{font-size:17px;font-weight:500;color:#fff}
+.sb-t{font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px}
+.sb-nav{flex:1;overflow-y:auto;padding:4px 0}
+.sbs{padding:12px 16px 3px;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.sbi{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;border-left:2px solid transparent;transition:.12s}
+.sbi:hover{color:#fff;background:rgba(255,255,255,0.06)}
+.sbi.on{color:#fff;background:rgba(255,255,255,0.1);border-left-color:#4CAF78}
+.sb-foot{padding:14px 16px;border-top:0.5px solid rgba(255,255,255,0.08)}
+.sb-bar{height:2px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:6px}
+.sb-fill{height:2px;background:#4CAF78;width:34%;border-radius:2px}
+.main{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.tb{display:flex;align-items:center;gap:8px;padding:10px 20px;border-bottom:0.5px solid #D8D5CF;background:#F6F1E8;flex-shrink:0}
+.si{flex:1;max-width:320px;position:relative}
+.si input{width:100%;padding:7px 12px 7px 30px;border-radius:9px;border:0.5px solid #D8D5CF;background:#EDE8DF;font-size:13px;color:#252422;font-family:'Inter',sans-serif;outline:none}
+.si input:focus{border-color:#C8C4BC;background:#fff}
+.si-ic{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:#9A948E}
+.tb-r{display:flex;align-items:center;gap:6px;margin-left:auto}
+.vt{display:flex;border:0.5px solid #D8D5CF;border-radius:8px;overflow:hidden}
+.vb{width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#F6F1E8;font-size:13px;color:#9A948E}
+.vb.on{background:#E4DED4;color:#252422}
+.ic-btn{width:28px;height:28px;border-radius:8px;border:0.5px solid #D8D5CF;background:#F6F1E8;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#9A948E}
+.ic-btn:hover{background:#EDE8DF}
+.cb{display:flex;align-items:center;gap:5px;padding:0 12px;height:28px;border-radius:9px;border:none;background:#1F2A24;color:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif}
+.cb:hover{background:#2A3A2E}
+.ob{padding:0 10px;height:28px;border-radius:9px;border:0.5px solid #D8D5CF;background:transparent;color:#9A948E;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif}
+.ob:hover{background:#EDE8DF;color:#252422}
+.cnt{flex:1;overflow-y:auto;padding:18px 22px}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.st{font-size:10px;font-weight:500;letter-spacing:.6px;text-transform:uppercase;color:#9A948E}
+.sl{font-size:11px;color:#9A948E;cursor:pointer;background:none;border:none;font-family:'Inter',sans-serif}
+.sl:hover{color:#252422}
+.pr{display:flex;gap:6px;margin-bottom:20px;overflow-x:auto;padding-bottom:2px}
+.pc{flex-shrink:0;background:#fff;border:0.5px solid #D8D5CF;border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;min-width:140px}
+.pc:hover{border-color:#C8C4BC;background:#EDE8DF}
+.pi{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.pn{font-size:11px;font-weight:500;color:#252422}
+.pm{font-size:10px;color:#9A948E}
+.fg{display:grid;gap:9px;margin-bottom:20px}
+.fc{background:#fff;border:0.5px solid #D8D5CF;border-radius:13px;padding:14px;cursor:pointer;position:relative;overflow:hidden;transition:.12s}
+.fc:hover{border-color:#C8C4BC}
+.fa{position:absolute;top:0;left:0;right:0;height:2px}
+.fi{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:8px;border:0.5px solid #D8D5CF}
+.fn{font-size:10px;color:#9A948E;margin-bottom:2px}
+.fm{font-size:13px;font-weight:500;color:#252422;margin-bottom:2px}
+.fd{font-size:11px;color:#6B6560;line-height:1.4;margin-bottom:8px}
+.ff{display:flex;justify-content:space-between;padding-top:8px;border-top:0.5px solid #D8D5CF}
+.fc2{font-size:10px;color:#9A948E}
+.tc{display:grid;grid-template-columns:1fr 260px;gap:16px}
+.rl{display:flex;flex-direction:column;gap:2px}
+.ri{display:flex;align-items:center;gap:9px;padding:6px 9px;border-radius:7px;cursor:pointer}
+.ri:hover{background:#EDE8DF}
+.ric{width:24px;height:24px;border-radius:5px;background:#EDE8DF;border:0.5px solid #D8D5CF;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:#6B6560}
+.rn{font-size:12px;color:#252422;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rtg{font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;flex-shrink:0}
+.tgs{background:#EAF3DE;color:#27500A}
+.tgi{background:#E6F1FB;color:#0C447C}
+.rd{font-size:10px;color:#9A948E;margin-left:auto;flex-shrink:0}
+.al{display:flex;flex-direction:column}
+.ai{display:flex;gap:8px;padding:6px 0;border-bottom:0.5px solid #D8D5CF}
+.ai:last-child{border-bottom:none}
+.ad{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.ab{font-size:11px;color:#6B6560;line-height:1.5}
+.ab strong{color:#252422;font-weight:500}
+.at{font-size:10px;color:#9A948E;margin-top:1px}
+.dov{display:none;position:fixed;inset:0;background:rgba(31,42,36,0.15);z-index:50}
+.dov.open{display:block}
+.dr{position:fixed;top:0;right:-460px;width:440px;height:100%;background:#fff;border-left:0.5px solid #D8D5CF;z-index:51;display:flex;flex-direction:column;transition:right .22s ease}
+.dr.open{right:0}
+.dh{display:flex;align-items:center;gap:9px;padding:13px 17px;border-bottom:0.5px solid #D8D5CF;flex-shrink:0}
+.dhic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.dht{font-size:13px;font-weight:500;color:#252422;flex:1}
+.dhs{font-size:10px;color:#9A948E}
+.dhb{font-size:10px;padding:2px 7px;border-radius:8px;background:#EDE8DF;color:#9A948E;border:0.5px solid #D8D5CF}
+.dc{width:24px;height:24px;border-radius:5px;border:0.5px solid #D8D5CF;background:none;cursor:pointer;font-size:14px;color:#9A948E;display:flex;align-items:center;justify-content:center}
+.db{flex:1;overflow-y:auto;padding:14px 17px}
+.ds{margin-bottom:14px}
+.dst{font-size:10px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:#9A948E;margin-bottom:7px;padding-bottom:5px;border-bottom:0.5px solid #D8D5CF}
+.uz{border:1px dashed #C8C4BC;border-radius:7px;padding:16px;text-align:center;cursor:pointer}
+.uz:hover{border-color:#1F2A24;background:#F6F1E8}
+.uz p{font-size:12px;color:#6B6560;margin-top:5px}
+.uz span{font-size:10px;color:#9A948E;margin-top:1px;display:block}
+.frow{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;border:0.5px solid transparent}
+.frow:hover{background:#F6F1E8;border-color:#D8D5CF}
+.frow span{font-size:12px;color:#252422;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fsz{font-size:10px;color:#9A948E}
+.fop{font-size:10px;color:#1F2A24;opacity:0;margin-left:4px}
+.frow:hover .fop{opacity:1}
+.na{width:100%;border:0.5px solid #D8D5CF;border-radius:7px;padding:8px 10px;font-size:12px;font-family:'Inter',sans-serif;color:#252422;background:#F6F1E8;resize:none;outline:none;min-height:68px;line-height:1.6}
+.na:focus{border-color:#C8C4BC;background:#fff}
+.tr{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid #D8D5CF}
+.tr:last-child{border-bottom:none}
+.tc2{width:14px;height:14px;border-radius:3px;border:1.5px solid #C8C4BC;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;background:#fff}
+.tc2.ck{background:#1F2A24;border-color:#1F2A24}
+.tt{font-size:12px;color:#252422;flex:1;line-height:1.4}
+.tt.ck{text-decoration:line-through;color:#9A948E}
+.tdu{font-size:10px;color:#9A948E;padding:1px 6px;border-radius:6px;background:#EDE8DF;border:0.5px solid #D8D5CF;white-space:nowrap}
+.tw{display:flex;flex-wrap:wrap;gap:4px}
+.tg{font-size:11px;padding:2px 8px;border-radius:16px;background:#EDE8DF;border:0.5px solid #D8D5CF;color:#6B6560;cursor:pointer}
+.df{padding:11px 17px;border-top:0.5px solid #D8D5CF;display:flex;gap:7px;flex-shrink:0}
+.db2{flex:1;height:30px;border-radius:7px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;border:0.5px solid #D8D5CF;background:#F6F1E8;color:#6B6560}
+.db2:hover{background:#EDE8DF}
+.db2.p{background:#1F2A24;color:#fff;border-color:#1F2A24}
+.db2.p:hover{background:#2A3A2E}
+.mov{display:none;position:fixed;inset:0;z-index:60}
+.mov.open{display:block}
+.mp{position:fixed;top:48px;right:18px;width:300px;background:#fff;border:0.5px solid #D8D5CF;border-radius:12px;overflow:hidden;z-index:61;box-shadow:0 4px 16px rgba(31,42,36,0.1)}
+.mph{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:0.5px solid #D8D5CF}
+.mpt{font-size:13px;font-weight:500;color:#252422}
+.mit{display:flex;align-items:center;gap:9px;padding:9px 12px;cursor:pointer;border-bottom:0.5px solid #D8D5CF}
+.mit:last-child{border-bottom:none}
+.mit:hover{background:#F6F1E8}
+.mic{width:26px;height:26px;border-radius:6px;background:#EDE8DF;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.min{font-size:12px;font-weight:500;color:#252422}
+.mis{font-size:10px;color:#9A948E;margin-top:1px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1F2A24;color:#fff;padding:9px 18px;border-radius:9px;font-size:12px;font-family:'Inter',sans-serif;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="lb">
+    <div class="lw">FINN.</div>
+    <div class="lt">Company headquarters · Private access</div>
+    <label class="ll">Access code</label>
+    <input class="li" type="password" id="pw" placeholder="Enter your access code" />
+    <button class="lb-btn" id="enter-btn">Enter HQ</button>
+    <div class="le" id="lerr">Incorrect code. Try again.</div>
+    <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:20px;text-align:center">finnhomejobs.com/hq</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="sb">
+    <div class="sb-top">
+      <div class="sb-w">FINN.</div>
+      <div class="sb-t">Book it. It's handled.</div>
+    </div>
+    <div class="sb-nav">
+      <div class="sbs">Workspace</div>
+      <div class="sbi on">⌂ Home</div>
+      <div class="sbi">📄 All files <span style="margin-left:auto;background:rgba(255,255,255,0.1);border-radius:8px;padding:1px 6px;font-size:10px">48</span></div>
+      <div class="sbi">★ Pinned</div>
+      <div class="sbi">◷ Recent</div>
+      <div class="sbi">☑ Tasks <span style="margin-left:auto;background:rgba(255,255,255,0.1);border-radius:8px;padding:1px 6px;font-size:10px">7</span></div>
+      <div class="sbs" style="margin-top:6px">Folders</div>
+      <div class="sbi" onclick="openF(0);setSbiActive(this)">⚖ 01 Legal</div>
+      <div class="sbi" onclick="openF(1);setSbiActive(this)">$ 02 Banking</div>
+      <div class="sbi" onclick="openF(2);setSbiActive(this)">◈ 03 Brand</div>
+      <div class="sbi" onclick="openF(3);setSbiActive(this)">📱 04 Product</div>
+      <div class="sbi" onclick="openF(4);setSbiActive(this)">⚙ 05 Operations</div>
+      <div class="sbi" onclick="openF(5);setSbiActive(this)">📢 06 Marketing</div>
+      <div class="sbi" onclick="openF(6);setSbiActive(this)">🔧 07 Providers</div>
+      <div class="sbi" onclick="openF(7);setSbiActive(this)">👥 08 Customers</div>
+    </div>
+    <div class="sb-foot">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.35)"><span>Storage</span><span>3.4 / 10 GB</span></div>
+      <div class="sb-bar"><div class="sb-fill"></div></div>
+      <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,0.25)">sales@finnhomejobs.com</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="tb">
+      <div class="si">
+        <span class="si-ic">🔍</span>
+        <input type="text" placeholder="Search folders, files... (Ctrl+K)" id="srch" oninput="filterF(this.value)"/>
+      </div>
+      <div class="tb-r">
+        <div class="vt">
+          <div class="vb on" id="gBtn" onclick="setV('grid')" title="Grid">⊞</div>
+          <div class="vb" id="lBtn" onclick="setV('list')" title="List">≡</div>
+        </div>
+        <div class="ic-btn" onclick="sortF()" title="Sort">⇅</div>
+        <button class="cb" onclick="openMenu()">+ Create new</button>
+        <button class="ob" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+
+    <div class="cnt">
+      <div class="sh"><div class="st">Pinned</div><button class="sl">Manage</button></div>
+      <div class="pr">
+        <div class="pc" onclick="openF(2)"><div class="pi" style="background:#EDE8DF">◈</div><div><div class="pn">Brand guidelines</div><div class="pm">03 Brand</div></div></div>
+        <div class="pc" onclick="openF(3)"><div class="pi" style="background:#EAF3DE">📱</div><div><div class="pn">Developer brief</div><div class="pm">04 Product</div></div></div>
+        <div class="pc" onclick="openF(0)"><div class="pi" style="background:#EAF3DE">⚖</div><div><div class="pn">Business reg.</div><div class="pm">01 Legal</div></div></div>
+        <div class="pc" onclick="openF(1)"><div class="pi" style="background:#FAEEDA">$</div><div><div class="pn">Stripe setup</div><div class="pm">02 Banking</div></div></div>
+      </div>
+
+      <div class="sh"><div class="st">Folders</div><button class="sl" id="sortLbl" onclick="sortF()">A → Z</button></div>
+      <div class="fg" id="fg"></div>
+
+      <div class="tc">
+        <div>
+          <div class="sh"><div class="st">Recent files</div><button class="sl">See all</button></div>
+          <div class="rl" id="rl"></div>
+        </div>
+        <div>
+          <div class="sh"><div class="st">Activity</div></div>
+          <div class="al" id="al"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dov" id="dov" onclick="closeDr()"></div>
+<div class="dr" id="dr">
+  <div class="dh">
+    <div class="dhic" id="dhic"></div>
+    <div style="flex:1"><div class="dht" id="dht"></div><div class="dhs" id="dhs"></div></div>
+    <span class="dhb" id="dhb"></span>
+    <button class="dc" onclick="closeDr()">✕</button>
+  </div>
+  <div class="db" id="db"></div>
+  <div class="df">
+    <button class="db2" onclick="closeDr()">Close</button>
+    <button class="db2 p">Upload file</button>
+  </div>
+</div>
+
+<div class="mov" id="mov" onclick="closeMenu()"></div>
+<div class="mp" id="mp" style="display:none">
+  <div class="mph"><div class="mpt">Create new</div><button class="dc" onclick="closeMenu()">✕</button></div>
+  <div class="mit" onclick="closeMenu()"><div class="mic">📁</div><div><div class="min">New folder</div><div class="mis">Organise files into a folder</div></div></div>
+  <div class="mit" onclick="closeMenu()"><div class="mic">📝</div><div><div class="min">New note</div><div class="mis">Quick note in any folder</div></div></div>
+  <div class="mit" onclick="closeMenu()"><div class="mic">⬆</div><div><div class="min">Upload file</div><div class="mis">Add a document, PDF, or image</div></div></div>
+  <div class="mit" onclick="closeMenu()"><div class="mic">☑</div><div><div class="min">New task</div><div class="mis">Attach to any folder</div></div></div>
+  <div class="mit" onclick="closeMenu()"><div class="mic">📋</div><div><div class="min">New SOP</div><div class="mis">Standard operating procedure</div></div></div>
+  <div class="mit" onclick="closeMenu()"><div class="mic">✍</div><div><div class="min">New contract</div><div class="mis">Saves to 01 Legal automatically</div></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var PW = 'finn2026';
+
+document.getElementById('enter-btn').addEventListener('click', function() {
+  var val = document.getElementById('pw').value;
+  if (val === PW) {
+    document.getElementById('login').classList.add('hide');
+    document.getElementById('app').classList.add('show');
+    sessionStorage.setItem('fhq','1');
+    setTimeout(function(){ render(); }, 50);
+  } else {
+    document.getElementById('lerr').style.display = 'block';
+    document.getElementById('pw').value = '';
+  }
+});
+
+document.getElementById('pw').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('enter-btn').click();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (sessionStorage.getItem('fhq') === '1') {
+    document.getElementById('login').classList.add('hide');
+    document.getElementById('app').classList.add('show');
+    render();
+  }
+});
+
+function logout() {
+  sessionStorage.removeItem('fhq');
+  location.reload();
+}
+
+var FOLDERS = [
+  {n:'01',name:'Legal',desc:'Registration, contracts, NDAs, compliance',em:'⚖',ac:'#4A7C59',bg:'#EAF3DE',cnt:6,up:'Today'},
+  {n:'02',name:'Banking & Financials',desc:'Bank accounts, Stripe, invoices, expenses',em:'$',ac:'#C8A050',bg:'#FAEEDA',cnt:11,up:'Yesterday'},
+  {n:'03',name:'Brand',desc:'Logos, colors, typography, design system',em:'◈',ac:'#1F2A24',bg:'#EDE8DF',cnt:18,up:'2 days ago'},
+  {n:'04',name:'Product',desc:'App prototype, developer brief, roadmap',em:'📱',ac:'#3B6D11',bg:'#EAF3DE',cnt:9,up:'Today'},
+  {n:'05',name:'Operations',desc:'SOPs, onboarding flows, team processes',em:'⚙',ac:'#888780',bg:'#F1EFE8',cnt:4,up:'3 days ago'},
+  {n:'06',name:'Marketing',desc:'Landing page, HubSpot, social, campaigns',em:'📢',ac:'#993C1D',bg:'#FAECE7',cnt:7,up:'Today'},
+  {n:'07',name:'Providers',desc:'Onboarding, verification, agreements',em:'🔧',ac:'#5F5E5A',bg:'#F1EFE8',cnt:3,up:'4 days ago'},
+  {n:'08',name:'Customers',desc:'Early access list, HubSpot, feedback',em:'👥',ac:'#3B6D11',bg:'#EAF3DE',cnt:5,up:'Yesterday'},
+];
+
+var FILES = [
+  [{n:'2026-05-19_Business_Name_Search.pdf',s:'0.8 MB',d:'Today'},{n:'2026-05-19_MB_Registration_Form.pdf',s:'1.2 MB',d:'Today'},{n:'FINN_NDA_Template.docx',s:'0.3 MB',d:'3 days ago'}],
+  [{n:'2026-05-18_Stripe_Keys.txt',s:'4 KB',d:'2 days ago'},{n:'2026-05-18_Supabase_Credentials.txt',s:'2 KB',d:'2 days ago'},{n:'FINN_Business_Banking_Notes.txt',s:'6 KB',d:'Yesterday'}],
+  [{n:'FINN_Brand_Guidelines_v1.pdf',s:'4.2 MB',d:'2 days ago'},{n:'FINN_Logo_Primary.svg',s:'0.1 MB',d:'3 days ago'},{n:'FINN_Design_System_v1.html',s:'0.6 MB',d:'Today'}],
+  [{n:'finn-snack.js',s:'1.1 MB',d:'Today'},{n:'finn-developer-brief.md',s:'0.2 MB',d:'Today'},{n:'finn-app-v2.zip',s:'8.4 MB',d:'3 days ago'},{n:'supabase-schema.sql',s:'0.1 MB',d:'Yesterday'}],
+  [{n:'FINN_Provider_Onboarding_SOP.docx',s:'0.4 MB',d:'3 days ago'},{n:'FINN_Booking_Flow_SOP.docx',s:'0.3 MB',d:'4 days ago'}],
+  [{n:'index.html',s:'0.5 MB',d:'Today'},{n:'FINN_Launch_Plan.docx',s:'0.2 MB',d:'Yesterday'},{n:'FINN_Facebook_Draft.txt',s:'2 KB',d:'Today'}],
+  [{n:'FINN_Provider_Agreement.docx',s:'0.4 MB',d:'4 days ago'},{n:'FINN_Verification_Checklist.pdf',s:'0.2 MB',d:'4 days ago'}],
+  [{n:'FINN_Early_Access_Signups.csv',s:'0.1 MB',d:'Yesterday'},{n:'FINN_Customer_Feedback.docx',s:'0.2 MB',d:'3 days ago'}],
+];
+
+var TASKS = [
+  [{t:'Register business name — Companies Office',d:false,due:'Today'},{t:'Get CRA Business Number',d:false,due:'This week'},{t:'Open business bank account',d:false,due:'This week'}],
+  [{t:'Move Stripe to business bank account',d:false,due:'This week'},{t:'Enable two-factor auth on Stripe',d:false,due:'Today'},{t:'Set payout schedule to manual',d:true,due:''}],
+  [{t:'Generate 12 AI house photos',d:false,due:'This week'},{t:'Send design system to developer',d:false,due:'Today'}],
+  [{t:'Send developer brief to Upwork dev',d:false,due:'Today'},{t:'Connect Supabase auth to app',d:false,due:'Next week'},{t:'Deploy Stripe Edge Functions',d:false,due:'Next week'}],
+  [{t:'Write provider onboarding SOP',d:false,due:'This week'},{t:'Create booking flow chart',d:true,due:''}],
+  [{t:'Share finnhomejobs.com on Facebook',d:false,due:'Today'},{t:'Post on Nextdoor Winkler',d:false,due:'Today'},{t:'Recruit 5 beta providers',d:false,due:'This week'}],
+  [{t:'Recruit 5 beta service providers',d:false,due:'This week'},{t:'Verify first provider identity',d:false,due:'Next week'}],
+  [{t:'Sign up 20 early access customers',d:false,due:'This week'},{t:'Send welcome email to signups',d:false,due:'This week'}],
+];
+
+var TAGS = [['legal','compliance'],['finance','stripe'],['brand','design'],['app','dev'],['ops','sop'],['marketing','launch'],['providers','ops'],['customers','crm']];
+
+var RECENT = [
+  {n:'finn-developer-brief.md',f:'04 Product',d:'Today 9:14am',tag:'Updated',tc:'tgi'},
+  {n:'2026-05-19_Business_Registration.pdf',f:'01 Legal',d:'Today 8:30am',tag:'New',tc:'tgs'},
+  {n:'FINN_Brand_Guidelines_v1.pdf',f:'03 Brand',d:'Yesterday',tag:'',tc:''},
+  {n:'finn-snack.js',f:'04 Product',d:'Yesterday',tag:'',tc:''},
+  {n:'supabase-schema.sql',f:'04 Product',d:'2 days ago',tag:'',tc:''},
+  {n:'FINN_Launch_Plan.docx',f:'06 Marketing',d:'Yesterday',tag:'',tc:''},
+];
+
+var ACTIVITY = [
+  {dot:'#4A7C59',t:'<strong>finn-developer-brief.md</strong> uploaded to 04 Product',time:'9:14 am today'},
+  {dot:'#3B6D11',t:'<strong>Supabase schema</strong> deployed successfully',time:'8:45 am today'},
+  {dot:'#C8A050',t:'<strong>Business registration</strong> started in 01 Legal',time:'8:30 am today'},
+  {dot:'#4A7C59',t:'<strong>finnhomejobs.com</strong> went live',time:'Yesterday 7:22 pm'},
+  {dot:'#185FA5',t:'<strong>HubSpot</strong> form connected to landing page',time:'Yesterday 4:10 pm'},
+  {dot:'#993C1D',t:'<strong>Stripe</strong> live keys saved to 02 Banking',time:'2 days ago'},
+];
+
+var curV = 'grid', sortAsc = true;
+var allFolders = FOLDERS.slice();
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2200);
+}
+
+function renderFolders(list) {
+  var g = document.getElementById('fg');
+  if (curV === 'list') {
+    g.style.gridTemplateColumns = '1fr';
+    g.innerHTML = list.map(function(f) {
+      var i = FOLDERS.indexOf(f);
+      return '<div class="fc" onclick="openF(' + i + ')" style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:9px">'
+        + '<div class="fi" style="background:' + f.bg + ';margin-bottom:0;flex-shrink:0">' + f.em + '</div>'
+        + '<div style="flex:1"><div class="fm">' + f.n + ' ' + f.name + '</div><div class="fd" style="margin-bottom:0">' + f.desc + '</div></div>'
+        + '<div class="fc2">' + f.cnt + ' files</div>'
+        + '<div class="fc2" style="margin-left:12px">' + f.up + '</div>'
+        + '</div>';
+    }).join('');
+    return;
+  }
+  g.style.gridTemplateColumns = 'repeat(auto-fill,minmax(200px,1fr))';
+  g.innerHTML = list.map(function(f) {
+    var i = FOLDERS.indexOf(f);
+    return '<div class="fc" onclick="openF(' + i + ')">'
+      + '<div class="fa" style="background:' + f.ac + '"></div>'
+      + '<div class="fi" style="background:' + f.bg + '">' + f.em + '</div>'
+      + '<div class="fn">' + f.n + '</div>'
+      + '<div class="fm">' + f.name + '</div>'
+      + '<div class="fd">' + f.desc + '</div>'
+      + '<div class="ff"><div class="fc2">' + f.cnt + ' files</div><div class="fc2">' + f.up + '</div></div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderRecent() {
+  document.getElementById('rl').innerHTML = RECENT.map(function(r) {
+    return '<div class="ri" onclick="toast(\'Opening: ' + r.n + '\')">'
+      + '<div class="ric">📄</div>'
+      + '<div class="rn">' + r.n + '</div>'
+      + (r.tag ? '<span class="rtg ' + r.tc + '">' + r.tag + '</span>' : '')
+      + '<div class="rd">' + r.d + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderActivity() {
+  document.getElementById('al').innerHTML = ACTIVITY.map(function(a) {
+    return '<div class="ai"><div class="ad" style="background:' + a.dot + '"></div>'
+      + '<div><div class="ab">' + a.t + '</div><div class="at">' + a.time + '</div></div></div>';
+  }).join('');
+}
+
+function filterF(q) {
+  var lq = q.toLowerCase();
+  renderFolders(q ? FOLDERS.filter(function(f) {
+    return f.name.toLowerCase().includes(lq) || f.desc.toLowerCase().includes(lq);
+  }) : FOLDERS);
+}
+
+function setV(v) {
+  curV = v;
+  document.getElementById('gBtn').classList.toggle('on', v === 'grid');
+  document.getElementById('lBtn').classList.toggle('on', v === 'list');
+  renderFolders(FOLDERS);
+}
+
+function sortF() {
+  sortAsc = !sortAsc;
+  FOLDERS.sort(function(a, b) { return sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name); });
+  document.getElementById('sortLbl').textContent = sortAsc ? 'A → Z' : 'Z → A';
+  renderFolders(FOLDERS);
+}
+
+function openF(idx) {
+  var f = FOLDERS[idx];
+  var files = FILES[idx] || [];
+  var tasks = TASKS[idx] || [];
+  var tags = TAGS[idx] || [];
+  var dhic = document.getElementById('dhic');
+  dhic.style.background = f.bg;
+  dhic.textContent = f.em;
+  document.getElementById('dht').textContent = f.n + ' ' + f.name;
+  document.getElementById('dhs').textContent = f.cnt + ' files · Updated ' + f.up;
+  document.getElementById('dhb').textContent = f.up;
+  var fileHtml = files.map(function(fi) {
+    return '<div class="frow" onclick="toast(\'Opening: ' + fi.n + '\')">'
+      + '<span style="font-size:13px;flex-shrink:0">📄</span>'
+      + '<span>' + fi.n + '</span>'
+      + '<span class="fsz">' + fi.s + '</span>'
+      + '<span class="fsz" style="margin-left:6px">' + fi.d + '</span>'
+      + '<span class="fop">Open ↗</span>'
+      + '</div>';
+  }).join('');
+  var taskHtml = tasks.map(function(t, ti) {
+    return '<div class="tr">'
+      + '<div class="tc2' + (t.d ? ' ck' : '') + '" onclick="toggleTask(' + idx + ',' + ti + ',this)">' + (t.d ? '✓' : '') + '</div>'
+      + '<div class="tt' + (t.d ? ' ck' : '') + '">' + t.t + '</div>'
+      + (t.due ? '<div class="tdu">' + t.due + '</div>' : '')
+      + '</div>';
+  }).join('');
+  var tagHtml = tags.map(function(tg) { return '<div class="tg">' + tg + '</div>'; }).join('') + '<div class="tg">+ Add</div>';
+  document.getElementById('db').innerHTML =
+    '<div class="ds"><div class="dst">Upload</div>'
+    + '<div class="uz"><div style="font-size:20px">☁</div><p>Drag files here or click to browse</p><span>PDF · DOC · JPG · ZIP</span></div></div>'
+    + '<div class="ds"><div class="dst">Files (' + files.length + ')</div>' + fileHtml + '</div>'
+    + '<div class="ds"><div class="dst">Tasks (' + tasks.length + ')</div>' + taskHtml + '</div>'
+    + '<div class="ds"><div class="dst">Notes</div><textarea class="na" placeholder="Add a note for this folder..."></textarea></div>'
+    + '<div class="ds"><div class="dst">Tags</div><div class="tw">' + tagHtml + '</div></div>';
+  document.getElementById('dov').classList.add('open');
+  document.getElementById('dr').classList.add('open');
+}
+
+function toggleTask(fi, ti, el) {
+  var t = TASKS[fi][ti];
+  t.d = !t.d;
+  el.classList.toggle('ck', t.d);
+  el.textContent = t.d ? '✓' : '';
+  el.nextElementSibling.classList.toggle('ck', t.d);
+}
+
+function closeDr() {
+  document.getElementById('dov').classList.remove('open');
+  document.getElementById('dr').classList.remove('open');
+}
+
+function openMenu() {
+  document.getElementById('mov').classList.add('open');
+  document.getElementById('mp').style.display = 'block';
+}
+
+function closeMenu() {
+  document.getElementById('mov').classList.remove('open');
+  document.getElementById('mp').style.display = 'none';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { closeDr(); closeMenu(); }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    var s = document.getElementById('srch');
+    if (s) s.focus();
+  }
+});
+
+function setSbiActive(el) {
+  document.querySelectorAll('.sbi').forEach(function(s) { s.classList.remove('on'); });
+  el.classList.add('on');
+}
+
+function render() {
+  renderFolders(FOLDERS);
+  renderRecent();
+  renderActivity();
+}
+</script>
+</body>
+</html>
