@@ -1,5 +1,4 @@
 const crypto = require("crypto");
-const OpenAI = require("openai");
 const Anthropic = require("@anthropic-ai/sdk");
 const { createClient } = require("@supabase/supabase-js");
 
@@ -10,12 +9,8 @@ const AGENTS = {
   "finn-executive-operator": {
     id: "finn-executive-operator",
     label: "FINN Executive Operator",
-    defaultProvider: "openai",
-    providerEnv: "FINN_EXECUTIVE_PROVIDER",
-    openaiModelEnv: "FINN_EXECUTIVE_OPENAI_MODEL",
-    anthropicModelEnv: "FINN_EXECUTIVE_ANTHROPIC_MODEL",
-    openaiDefaultModel: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-    anthropicDefaultModel:
+    modelEnv: "FINN_EXECUTIVE_ANTHROPIC_MODEL",
+    defaultModel:
       process.env.ANTHROPIC_MODEL || "claude-3-5-sonnet-latest",
     systemPrompt:
       "You are FINN Executive Operator. Operate as a focused executive command layer for FINN. Prioritize revenue-impacting execution, provider reliability, and booking throughput. Be concise, decisive, and operationally specific. Always convert requests into clear actions, ownership, and immediate next steps."
@@ -63,20 +58,11 @@ function parsePayload(req, res) {
 function resolveAgent(agentId) {
   const fallbackAgent = AGENTS["finn-executive-operator"];
   const agent = AGENTS[agentId] || fallbackAgent;
-  const provider =
-    (process.env[agent.providerEnv] || agent.defaultProvider || "openai")
-      .toLowerCase()
-      .trim();
-
-  const model =
-    provider === "anthropic"
-      ? process.env[agent.anthropicModelEnv] || agent.anthropicDefaultModel
-      : process.env[agent.openaiModelEnv] || agent.openaiDefaultModel;
 
   return {
     ...agent,
-    provider,
-    model
+    provider: "anthropic",
+    model: process.env[agent.modelEnv] || agent.defaultModel
   };
 }
 
@@ -118,34 +104,6 @@ async function persistMessage(supabase, { sessionId, agentId, role, content }) {
       `Failed to write chat message to Supabase (${CHAT_TABLE}): ${error.message}`
     );
   }
-}
-
-async function streamWithOpenAI({ model, systemPrompt, messages, res }) {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY is missing on the server.");
-  }
-
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-  });
-
-  const stream = await openai.chat.completions.create({
-    model,
-    messages: [{ role: "system", content: systemPrompt }, ...messages],
-    stream: true
-  });
-
-  let fullText = "";
-
-  for await (const chunk of stream) {
-    const delta = chunk.choices?.[0]?.delta?.content || "";
-    if (delta) {
-      fullText += delta;
-      writeSse(res, "delta", { text: delta });
-    }
-  }
-
-  return fullText;
 }
 
 async function streamWithAnthropic({ model, systemPrompt, messages, res }) {
@@ -214,13 +172,6 @@ module.exports = async (req, res) => {
 
   const agent = resolveAgent(agentId);
 
-  if (agent.provider !== "openai" && agent.provider !== "anthropic") {
-    res.status(400).json({
-      error: `Unsupported provider '${agent.provider}' for agent '${agent.id}'.`
-    });
-    return;
-  }
-
   let supabase;
   try {
     supabase = getSupabaseClient();
@@ -259,28 +210,21 @@ module.exports = async (req, res) => {
   writeSse(res, "session", {
     sessionId,
     agentId: agent.id,
-    provider: agent.provider,
+    provider: "anthropic",
     model: agent.model,
     agentLabel: agent.label
   });
 
   try {
-    const assistantText =
-      agent.provider === "anthropic"
-        ? await streamWithAnthropic({
-            model: agent.model,
-            systemPrompt: agent.systemPrompt,
-            messages: modelMessages,
-            res
-          })
-        : await streamWithOpenAI({
-            model: agent.model,
-            systemPrompt: agent.systemPrompt,
-            messages: modelMessages,
-            res
-          });
+    const assistantText = await streamWithAnthropic({
+      model: agent.model,
+      systemPrompt: agent.systemPrompt,
+      messages: modelMessages,
+      res
+    });
 
-    const safeAssistantText = (assistantText || "").trim() ||
+    const safeAssistantText =
+      (assistantText || "").trim() ||
       "I have no output yet. Please rephrase and try again.";
 
     await persistMessage(supabase, {

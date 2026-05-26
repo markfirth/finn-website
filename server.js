@@ -35,7 +35,6 @@ app.get("/health", (_req, res) => {
 app.post("/api/chat", chatHandler);
 
 app.listen(PORT, () => {
-  const openAIStatus = process.env.OPENAI_API_KEY ? "configured" : "missing";
   const anthropicStatus = process.env.ANTHROPIC_API_KEY
     ? "configured"
     : "missing";
@@ -45,6 +44,6 @@ app.listen(PORT, () => {
       : "missing";
 
   console.log(
-    `F. FINN AI server listening on http://localhost:${PORT} (OPENAI_API_KEY: ${openAIStatus}, ANTHROPIC_API_KEY: ${anthropicStatus}, SUPABASE: ${supabaseStatus})`
+    `F. FINN AI server listening on http://localhost:${PORT} (ANTHROPIC_API_KEY: ${anthropicStatus}, SUPABASE: ${supabaseStatus})`
   );
 });
