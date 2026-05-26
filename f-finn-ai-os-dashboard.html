@@ -235,6 +235,10 @@
       padding: 14px 16px;
     }
 
+    .message-card--assistant {
+      border-color: #dde8df;
+    }
+
     .message-meta {
       font-size: 0.67rem;
       letter-spacing: 0.11em;
@@ -244,12 +248,45 @@
       font-weight: 600;
     }
 
-    .message-text {
-      margin: 0;
+    .message-body {
       font-size: 0.92rem;
-      line-height: 1.55;
+      line-height: 1.6;
       color: #263028;
-      white-space: pre-wrap;
+    }
+
+    .message-body > :first-child {
+      margin-top: 0;
+    }
+
+    .message-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .message-body p {
+      margin: 0 0 10px;
+    }
+
+    .message-body strong {
+      font-weight: 700;
+    }
+
+    .message-body blockquote {
+      margin: 10px 0;
+      padding: 8px 12px;
+      border-left: 3px solid #bfd2c5;
+      background: #f7f3ea;
+      border-radius: 8px;
+      color: #2f3932;
+    }
+
+    .message-body ul,
+    .message-body ol {
+      margin: 8px 0 10px 20px;
+      padding: 0;
+    }
+
+    .message-body li {
+      margin-bottom: 4px;
     }
 
     .empty-state {
@@ -334,6 +371,11 @@
       font-family: inherit;
     }
 
+    .composer__input:disabled {
+      color: #8e9a92;
+      cursor: not-allowed;
+    }
+
     .composer__input::placeholder {
       color: #849088;
     }
@@ -355,6 +397,12 @@
     .composer__send:hover {
       transform: translateY(-1px);
       background: #0d1711;
+    }
+
+    .composer__send:disabled {
+      background: #5f6b63;
+      transform: none;
+      cursor: not-allowed;
     }
 
     @media (max-width: 900px) {
@@ -430,12 +478,19 @@
           autocomplete="off"
           placeholder="Message the active agent..."
         />
-        <button class="composer__send" type="submit" aria-label="Send message">➤</button>
+        <button class="composer__send" id="composer-send" type="submit" aria-label="Send message">➤</button>
       </form>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
+    const SYSTEM_PROMPTS = {
+      chief: "You are the Chief of Staff for FINN. Your personality is modeled after Susie Wiles: the quiet power in the background. Direct, dead-pan calm, low-profile, and transactional. No fluff, no cheerleading. Your job is operational focus and absolute anti-chaos. Rule 1: Maximum 3 priorities per day. Rule 2: Force execution over planning. If the user mentions building systems or design tweaks before 10 transactions, yell STOP - this is not execution. Rule 3: Provider recruitment is priority 1 until 15 providers are live.",
+      marketing: "You are the Marketing Engine for FINN. Tone: Premium but warm. Never use discount language, exclamation marks, or cheesy urgency tricks. Always use sentence case. Focus entirely on the emotional target of relief: 'Someone competent finally took this off my plate.' Target: High-income homeowners in Winnipeg.",
+      translator: "You are the Product Translator for FINN. Gate Rule: If a feature idea doesn't improve booking completion or provider retention, it waits in the backlog. Output developer-ready technical specs detailing screen components, required database changes, edge cases, and an explicit Cursor prompt format."
+    };
+
     const agentCatalog = {
       chief: {
         label: "💼 Chief of Staff",
@@ -472,18 +527,18 @@
       }
     };
 
-    const simulatedReplies = {
-      chief: "Chief of Staff routing: priorities normalized, owners mapped, and a concise operating cadence is ready.",
-      marketing: "Marketing Engine engaged: campaign concepts, messaging pillars, and distribution sequence have been generated.",
-      translator: "Product Translator ready: requirement translated into implementation-ready scope with milestones and edge-case checks."
-    };
-
-    const state = {
+    const controller = {
       activeAgentId: "chief",
+      systemPrompts: SYSTEM_PROMPTS,
       sessions: {
         chief: [],
         marketing: [],
         translator: []
+      },
+      streamingByAgent: {
+        chief: false,
+        marketing: false,
+        translator: false
       }
     };
 
@@ -496,34 +551,56 @@
       emptyState: document.getElementById("empty-state"),
       clearButton: document.getElementById("clear-session-button"),
       composerForm: document.getElementById("composer-form"),
-      composerInput: document.getElementById("composer-input")
+      composerInput: document.getElementById("composer-input"),
+      composerSend: document.getElementById("composer-send")
     };
 
+    function nextMessageId() {
+      return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
     function getActiveAgent() {
-      return agentCatalog[state.activeAgentId];
+      return agentCatalog[controller.activeAgentId];
+    }
+
+    function getActiveSession() {
+      return controller.sessions[controller.activeAgentId];
+    }
+
+    function setComposerState() {
+      const isStreaming = controller.streamingByAgent[controller.activeAgentId];
+      ui.composerInput.disabled = isStreaming;
+      ui.composerSend.disabled = isStreaming;
+      ui.composerInput.placeholder = isStreaming
+        ? "Agent is responding..."
+        : "Message the active agent...";
     }
 
     function switchAgent(nextAgentId) {
-      if (!agentCatalog[nextAgentId] || nextAgentId === state.activeAgentId) {
+      if (!agentCatalog[nextAgentId] || nextAgentId === controller.activeAgentId) {
         return;
       }
 
       ui.viewPanel.classList.add("is-transitioning");
       window.setTimeout(() => {
-        state.activeAgentId = nextAgentId;
+        controller.activeAgentId = nextAgentId;
         render();
         ui.viewPanel.classList.remove("is-transitioning");
       }, 160);
     }
 
-    function pushMessage(role, text) {
-      state.sessions[state.activeAgentId].push({ role, text });
-      renderConversation();
-    }
-
     function renderSidebar() {
       for (const button of ui.coreAgentButtons) {
-        const isActive = button.dataset.agentId === state.activeAgentId;
+        const isActive = button.dataset.agentId === controller.activeAgentId;
         button.classList.toggle("is-active", isActive);
       }
     }
@@ -535,7 +612,7 @@
     }
 
     function renderConversation() {
-      const activeMessages = state.sessions[state.activeAgentId];
+      const activeMessages = getActiveSession();
       ui.chatStream.innerHTML = "";
       ui.emptyState.innerHTML = "";
 
@@ -554,10 +631,7 @@
           button.className = "quick-pill";
           button.textContent = action;
           button.addEventListener("click", () => {
-            pushMessage("You", action);
-            window.setTimeout(() => {
-              pushMessage(agent.label, simulatedReplies[state.activeAgentId]);
-            }, 220);
+            sendPrompt(action);
           });
           pillDeck.appendChild(button);
         }
@@ -568,34 +642,177 @@
 
       for (const message of activeMessages) {
         const card = document.createElement("article");
-        card.className = "message-card";
-        card.innerHTML = `
-          <div class="message-meta">${message.role}</div>
-          <p class="message-text">${message.text}</p>
-        `;
+        card.className = `message-card ${message.role === "assistant" ? "message-card--assistant" : ""}`;
+
+        const meta = document.createElement("div");
+        meta.className = "message-meta";
+        meta.textContent = message.label;
+
+        const body = document.createElement("div");
+        body.className = "message-body";
+        if (message.role === "assistant") {
+          const markdownText = message.text || (message.streaming ? "_Thinking..._" : "");
+          body.innerHTML = marked.parse(markdownText);
+        } else {
+          body.innerHTML = `<p>${escapeHtml(message.text).replaceAll("\n", "<br />")}</p>`;
+        }
+
+        card.append(meta, body);
         ui.chatStream.appendChild(card);
       }
+
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
 
     function clearSession() {
-      state.sessions[state.activeAgentId] = [];
+      if (controller.streamingByAgent[controller.activeAgentId]) {
+        return;
+      }
+      controller.sessions[controller.activeAgentId] = [];
       renderConversation();
+    }
+
+    async function consumeEventStream(response, handlers) {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          break;
+        }
+
+        buffer += decoder.decode(value, { stream: true });
+        let boundaryIndex = buffer.indexOf("\n\n");
+
+        while (boundaryIndex !== -1) {
+          const rawEvent = buffer.slice(0, boundaryIndex).trim();
+          buffer = buffer.slice(boundaryIndex + 2);
+          boundaryIndex = buffer.indexOf("\n\n");
+
+          if (!rawEvent) {
+            continue;
+          }
+
+          let eventName = "message";
+          let payloadText = "";
+
+          for (const line of rawEvent.split("\n")) {
+            if (line.startsWith("event:")) {
+              eventName = line.slice(6).trim();
+            } else if (line.startsWith("data:")) {
+              payloadText += line.slice(5).trim();
+            }
+          }
+
+          if (!payloadText) {
+            continue;
+          }
+
+          let payload = {};
+          try {
+            payload = JSON.parse(payloadText);
+          } catch {
+            payload = {};
+          }
+
+          if (eventName === "delta") {
+            handlers.onDelta(payload.text || "");
+          } else if (eventName === "error") {
+            handlers.onError(payload.message || "Unknown server error");
+          } else if (eventName === "done") {
+            handlers.onDone();
+          }
+        }
+      }
+    }
+
+    async function sendPrompt(promptText) {
+      const trimmedText = promptText.trim();
+      const agentId = controller.activeAgentId;
+      const agent = agentCatalog[agentId];
+
+      if (!trimmedText || controller.streamingByAgent[agentId]) {
+        return;
+      }
+
+      const session = controller.sessions[agentId];
+
+      session.push({
+        id: nextMessageId(),
+        role: "user",
+        label: "You",
+        text: trimmedText,
+        streaming: false
+      });
+
+      const assistantMessage = {
+        id: nextMessageId(),
+        role: "assistant",
+        label: agent.label,
+        text: "",
+        streaming: true
+      };
+      session.push(assistantMessage);
+
+      controller.streamingByAgent[agentId] = true;
+      renderConversation();
+      setComposerState();
+
+      const history = session
+        .filter((message) => message.id !== assistantMessage.id)
+        .map((message) => ({
+          role: message.role,
+          content: message.text
+        }));
+
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            agentId,
+            systemPrompt: controller.systemPrompts[agentId],
+            message: trimmedText,
+            history
+          })
+        });
+
+        if (!response.ok || !response.body) {
+          const text = await response.text();
+          throw new Error(text || "Request failed.");
+        }
+
+        await consumeEventStream(response, {
+          onDelta(text) {
+            assistantMessage.text += text;
+            renderConversation();
+          },
+          onError(message) {
+            throw new Error(message);
+          },
+          onDone() {
+            assistantMessage.streaming = false;
+          }
+        });
+      } catch (error) {
+        assistantMessage.text = `> ${error.message || "Unable to reach the AI server."}`;
+        assistantMessage.streaming = false;
+      } finally {
+        controller.streamingByAgent[agentId] = false;
+        renderConversation();
+        setComposerState();
+      }
     }
 
     function submitPrompt(event) {
       event.preventDefault();
-      const value = ui.composerInput.value.trim();
-      if (!value) {
-        return;
-      }
-
-      pushMessage("You", value);
+      const value = ui.composerInput.value;
       ui.composerInput.value = "";
-
-      window.setTimeout(() => {
-        const activeAgent = getActiveAgent();
-        pushMessage(activeAgent.label, simulatedReplies[state.activeAgentId]);
-      }, 240);
+      sendPrompt(value);
     }
 
     function bindEvents() {
@@ -610,6 +827,7 @@
       renderSidebar();
       renderTopBar();
       renderConversation();
+      setComposerState();
     }
 
     bindEvents();
