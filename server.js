@@ -10,10 +10,6 @@ const PORT = Number(process.env.PORT || 3000);
 const MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 const DASHBOARD_FILE = "f-finn-ai-os-dashboard.html";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
-
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(__dirname));
 
@@ -91,6 +87,10 @@ app.post("/api/chat", async (req, res) => {
     { role: "system", content: systemPrompt.trim() },
     ...safeHistory
   ];
+
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
 
   res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
   res.setHeader("Cache-Control", "no-cache, no-transform");
