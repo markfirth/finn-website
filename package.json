@@ -19,8 +19,9 @@
   },
   "homepage": "https://github.com/markfirth/finn-website#readme",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.98.0",
+    "@supabase/supabase-js": "^2.106.2",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "openai": "^6.39.0"
+    "express": "^5.2.1"
   }
 }

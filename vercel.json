@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/f-finn-ai-os-dashboard.html"
+    },
+    {
       "source": "/hq",
       "destination": "/f-finn-ai-os-dashboard.html"
     },
