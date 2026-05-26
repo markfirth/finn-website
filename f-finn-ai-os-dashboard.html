@@ -434,9 +434,7 @@
       <section>
         <h2 class="sidebar__section-title">Core Agents</h2>
         <ul class="agent-list" id="core-agent-list">
-          <li><button class="agent-item" data-agent-id="chief"><span class="agent-label">💼 Chief of Staff</span><span class="badge badge--live">NOW</span></button></li>
-          <li><button class="agent-item" data-agent-id="marketing"><span class="agent-label">📣 Marketing Engine</span><span class="badge badge--live">NOW</span></button></li>
-          <li><button class="agent-item" data-agent-id="translator"><span class="agent-label">🔧 Product Translator</span><span class="badge badge--live">NOW</span></button></li>
+          <li><button class="agent-item" data-agent-id="finn-executive-operator"><span class="agent-label">🧭 FINN Executive Operator</span><span class="badge badge--live">NOW</span></button></li>
         </ul>
       </section>
 
@@ -454,8 +452,8 @@
     <main class="workspace">
       <header class="top-nav">
         <div class="top-nav__left">
-          <h1 class="top-nav__title" id="agent-title">💼 Chief of Staff</h1>
-          <span class="badge badge--engine" id="engine-version">Engine v1.8</span>
+          <h1 class="top-nav__title" id="agent-title">🧭 FINN Executive Operator</h1>
+          <span class="badge badge--engine" id="engine-version">Engine v1.0</span>
         </div>
         <button class="clear-button" id="clear-session-button" type="button">Clear Session</button>
       </header>
@@ -485,62 +483,37 @@
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
-    const SYSTEM_PROMPTS = {
-      chief: "You are the Chief of Staff for FINN. Your personality is modeled after Susie Wiles: the quiet power in the background. Direct, dead-pan calm, low-profile, and transactional. No fluff, no cheerleading. Your job is operational focus and absolute anti-chaos. Rule 1: Maximum 3 priorities per day. Rule 2: Force execution over planning. If the user mentions building systems or design tweaks before 10 transactions, yell STOP - this is not execution. Rule 3: Provider recruitment is priority 1 until 15 providers are live.",
-      marketing: "You are the Marketing Engine for FINN. Tone: Premium but warm. Never use discount language, exclamation marks, or cheesy urgency tricks. Always use sentence case. Focus entirely on the emotional target of relief: 'Someone competent finally took this off my plate.' Target: High-income homeowners in Winnipeg.",
-      translator: "You are the Product Translator for FINN. Gate Rule: If a feature idea doesn't improve booking completion or provider retention, it waits in the backlog. Output developer-ready technical specs detailing screen components, required database changes, edge cases, and an explicit Cursor prompt format."
-    };
+    const DEFAULT_AGENT_ID = "finn-executive-operator";
+    const SESSION_STORAGE_KEY = "finn-chat-session-id";
 
     const agentCatalog = {
-      chief: {
-        label: "💼 Chief of Staff",
-        engineVersion: "Engine v1.8",
-        intro: "Coordinate strategy, priorities, and execution rhythm.",
+      "finn-executive-operator": {
+        label: "🧭 FINN Executive Operator",
+        engineVersion: "Engine v1.0",
+        intro: "Execution-focused control center for FINN leadership decisions.",
         quickActions: [
-          "Draft this week's executive priorities",
-          "Summarize blockers across all workstreams",
-          "Build a delegation plan by owner",
-          "Prepare tomorrow's leadership brief"
-        ]
-      },
-      marketing: {
-        label: "📣 Marketing Engine",
-        engineVersion: "Engine v2.1",
-        intro: "Launch campaigns, shape messaging, and tune acquisition.",
-        quickActions: [
-          "Generate a premium brand campaign angle",
-          "Map content ideas for a 14-day launch sprint",
-          "Draft ad copy variants by audience",
-          "Create a go-to-market narrative"
-        ]
-      },
-      translator: {
-        label: "🔧 Product Translator",
-        engineVersion: "Engine v1.5",
-        intro: "Convert business asks into scoped product deliverables.",
-        quickActions: [
-          "Turn this feature request into engineering specs",
-          "Write acceptance criteria for a new workflow",
-          "Break down this initiative into sprint tickets",
-          "Identify risks and dependencies"
+          "What are the top 3 execution priorities for today?",
+          "Audit current blockers across provider onboarding",
+          "Draft an operator plan to increase bookings this week",
+          "Summarize what must ship before adding new features"
         ]
       }
     };
 
     const controller = {
-      activeAgentId: "chief",
-      systemPrompts: SYSTEM_PROMPTS,
+      activeAgentId: DEFAULT_AGENT_ID,
+      sessionId:
+        localStorage.getItem(SESSION_STORAGE_KEY) ||
+        (window.crypto?.randomUUID ? window.crypto.randomUUID() : String(Date.now()) + "-session"),
       sessions: {
-        chief: [],
-        marketing: [],
-        translator: []
+        [DEFAULT_AGENT_ID]: []
       },
       streamingByAgent: {
-        chief: false,
-        marketing: false,
-        translator: false
+        [DEFAULT_AGENT_ID]: false
       }
     };
+
+    localStorage.setItem(SESSION_STORAGE_KEY, controller.sessionId);
 
     const ui = {
       viewPanel: document.getElementById("view-panel"),
@@ -573,6 +546,9 @@
     }
 
     function getActiveSession() {
+      if (!controller.sessions[controller.activeAgentId]) {
+        controller.sessions[controller.activeAgentId] = [];
+      }
       return controller.sessions[controller.activeAgentId];
     }
 
@@ -669,6 +645,10 @@
         return;
       }
       controller.sessions[controller.activeAgentId] = [];
+      controller.sessionId = window.crypto?.randomUUID
+        ? window.crypto.randomUUID()
+        : String(Date.now()) + "-session";
+      localStorage.setItem(SESSION_STORAGE_KEY, controller.sessionId);
       renderConversation();
     }
 
@@ -717,12 +697,14 @@
             payload = {};
           }
 
-          if (eventName === "delta") {
+          if (eventName === "session") {
+            handlers.onSession(payload);
+          } else if (eventName === "delta") {
             handlers.onDelta(payload.text || "");
           } else if (eventName === "error") {
             handlers.onError(payload.message || "Unknown server error");
           } else if (eventName === "done") {
-            handlers.onDone();
+            handlers.onDone(payload);
           }
         }
       }
@@ -737,7 +719,7 @@
         return;
       }
 
-      const session = controller.sessions[agentId];
+      const session = getActiveSession();
 
       session.push({
         id: nextMessageId(),
@@ -760,13 +742,6 @@
       renderConversation();
       setComposerState();
 
-      const history = session
-        .filter((message) => message.id !== assistantMessage.id)
-        .map((message) => ({
-          role: message.role,
-          content: message.text
-        }));
-
       try {
         const response = await fetch("/api/chat", {
           method: "POST",
@@ -775,9 +750,8 @@
           },
           body: JSON.stringify({
             agentId,
-            systemPrompt: controller.systemPrompts[agentId],
-            message: trimmedText,
-            history
+            sessionId: controller.sessionId,
+            message: trimmedText
           })
         });
 
@@ -787,6 +761,12 @@
         }
 
         await consumeEventStream(response, {
+          onSession(payload) {
+            if (payload && payload.sessionId) {
+              controller.sessionId = payload.sessionId;
+              localStorage.setItem(SESSION_STORAGE_KEY, payload.sessionId);
+            }
+          },
           onDelta(text) {
             assistantMessage.text += text;
             renderConversation();
@@ -794,7 +774,11 @@
           onError(message) {
             throw new Error(message);
           },
-          onDone() {
+          onDone(payload) {
+            if (payload && payload.sessionId) {
+              controller.sessionId = payload.sessionId;
+              localStorage.setItem(SESSION_STORAGE_KEY, payload.sessionId);
+            }
             assistantMessage.streaming = false;
           }
         });
